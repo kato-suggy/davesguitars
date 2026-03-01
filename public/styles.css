@@ -1,0 +1,36 @@
+/* Minimal base styles — Tailwind CDN handles the rest */
+
+/* Prevent FOUC */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles (accessibility) */
+:focus-visible {
+  outline: 2px solid #d4821e;
+  outline-offset: 3px;
+}
+
+/* Line-clamp utility (for blog card excerpts) */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* HTMX loading indicator */
+.htmx-indicator {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 0.6;
+  cursor: wait;
+}
