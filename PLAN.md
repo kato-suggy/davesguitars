@@ -88,7 +88,7 @@ It's also a learning exercise in the MCP standard.
 
 | Service | Cost |
 |---|---|
-| Domain (davesguitars.co.uk) | ~£10/year |
+| Domain (davesguitar.co.uk) | ~£10/year |
 | Cloudflare Workers | **Free** (100k requests/day — site won't come close) |
 | Google Drive API | **Free** (1 billion calls/day quota — effectively unlimited) |
 | Google Cloud (service account) | **Free** |

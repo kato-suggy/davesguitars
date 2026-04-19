@@ -16,7 +16,7 @@ binding = "IMAGES"
 bucket_name = "davesguitars-images"
 
 [vars]
-SITE_URL = "https://davesguitars.co.uk"
+SITE_URL = "https://davesguitar.co.uk"
 SITE_NAME = "Dave's Guitars"
 
 # Secrets — set with: wrangler secret put <NAME>

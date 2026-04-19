@@ -25,13 +25,13 @@ export function layout(content: string, opts: LayoutOptions): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${fullTitle}</title>
   <meta name="description" content="${description}">
-  <link rel="canonical" href="https://davesguitars.co.uk${canonicalPath}">
+  <link rel="canonical" href="https://davesguitar.co.uk${canonicalPath}">
 
   <!-- Open Graph -->
   <meta property="og:title" content="${fullTitle}">
   <meta property="og:description" content="${description}">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://davesguitars.co.uk${canonicalPath}">
+  <meta property="og:url" content="https://davesguitar.co.uk${canonicalPath}">
 
   <!-- Tailwind CSS Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>

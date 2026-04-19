@@ -11,7 +11,7 @@ export async function sendContactEmail(
   env: { RESEND_API_KEY: string; CONTACT_EMAIL: string }
 ): Promise<{ ok: boolean; error?: string }> {
   const body = {
-    from: "Dave's Guitars <noreply@davesguitars.co.uk>",
+    from: "Dave's Guitars <noreply@davesguitar.co.uk>",
     to: env.CONTACT_EMAIL,
     reply_to: payload.email,
     subject: `Quote request: ${payload.repairType} — ${payload.guitarType}`,
@@ -24,7 +24,7 @@ export async function sendContactEmail(
         <tr style="background:#f5f5f5"><td style="padding:8px;font-weight:bold">Repair type</td><td style="padding:8px">${escHtml(payload.repairType)}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;vertical-align:top">Message</td><td style="padding:8px;white-space:pre-wrap">${escHtml(payload.message)}</td></tr>
       </table>
-      <p style="margin-top:16px;color:#888;font-size:12px">Sent via davesguitars.co.uk contact form</p>
+      <p style="margin-top:16px;color:#888;font-size:12px">Sent via davesguitar.co.uk contact form</p>
     `,
   }
 

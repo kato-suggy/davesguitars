@@ -9,7 +9,7 @@ const LOCAL_BUSINESS_JSON_LD = JSON.stringify({
   "@type": "LocalBusiness",
   "name": "Dave's Guitars",
   "description": "Expert guitar repair, setups, and custom luthier work in the UK.",
-  "url": "https://davesguitars.co.uk",
+  "url": "https://davesguitar.co.uk",
   "priceRange": "££",
   "currenciesAccepted": "GBP",
   "paymentAccepted": "Cash, Bank Transfer",
