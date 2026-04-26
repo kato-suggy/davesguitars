@@ -1,6 +1,19 @@
+/**
+ * Site layout shell.
+ *
+ * Applies the Dave's Guitars design system (slate / mint / bone / ink palette,
+ * Arimo + Georgia type) defined in src/styles/tokens.css. Page-level
+ * stylesheet is built by the Tailwind CLI to public/styles.css.
+ *
+ * Datastar (replaces HTMX) is loaded from CDN for progressive-enhancement
+ * interactions on forms etc. The mobile menu uses a native <details> element
+ * so it works without any JS at all.
+ */
+
 type LayoutOptions = {
   title: string
   description?: string
+  /** Used for canonical URL, OG URL, and active-nav highlighting */
   canonicalPath?: string
   /** Extra <head> content (JSON-LD, etc.) */
   head?: string
@@ -9,7 +22,7 @@ type LayoutOptions = {
 export function layout(content: string, opts: LayoutOptions): string {
   const {
     title,
-    description = "Expert guitar repair, setups, and custom luthier work. Based in the UK.",
+    description = "Expert guitar repair, setups, and custom luthier work. Since 1993.",
     canonicalPath = "/",
     head = "",
   } = opts
@@ -32,57 +45,21 @@ export function layout(content: string, opts: LayoutOptions): string {
   <meta property="og:description" content="${description}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://davesguitar.co.uk${canonicalPath}">
+  <meta property="og:image" content="https://davesguitar.co.uk/assets/logo-square.png">
 
-  <!-- Tailwind CSS Play CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            wood: {
-              50:  '#fdf8f0',
-              100: '#faefd9',
-              200: '#f3d9a8',
-              300: '#e9bc6d',
-              400: '#de9a3c',
-              500: '#d4821e',
-              600: '#b86615',
-              700: '#924d13',
-              800: '#763e17',
-              900: '#613517',
-            },
-            guitar: {
-              dark:   '#1a0e05',
-              warm:   '#3d1f08',
-              medium: '#6b3a1a',
-            }
-          },
-          fontFamily: {
-            serif: ['Georgia', 'Times New Roman', 'serif'],
-            sans:  ['system-ui', '-apple-system', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <link rel="icon" type="image/png" href="/assets/logo-square.png">
 
-  <!-- HTMX -->
-  <script src="/htmx.min.js" defer></script>
+  <!-- Built CSS — design tokens + Tailwind utilities -->
+  <link rel="stylesheet" href="/styles.css">
 
-  <!-- Prevent FOUC on Tailwind CDN -->
-  <style>
-    [x-cloak] { display: none !important; }
-    /* Smooth HTMX transitions */
-    .htmx-swapping { opacity: 0; transition: opacity 100ms ease-out; }
-    .htmx-settling { opacity: 1; transition: opacity 200ms ease-in; }
-  </style>
+  <!-- Datastar — SSE-driven progressive enhancement -->
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"></script>
 
   ${head}
 </head>
-<body class="bg-wood-50 text-guitar-dark font-sans min-h-screen flex flex-col">
+<body class="bg-bone text-slate-ink min-h-screen flex flex-col">
 
-  ${nav()}
+  ${nav(canonicalPath)}
 
   <main class="flex-1">
     ${content}
@@ -94,121 +71,113 @@ export function layout(content: string, opts: LayoutOptions): string {
 </html>`
 }
 
-function nav(): string {
-  return /* html */ `
-<header class="bg-guitar-dark shadow-lg sticky top-0 z-50">
-  <nav class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
-    <div class="flex items-center justify-between h-16">
+const NAV_ITEMS: ReadonlyArray<{ href: string; label: string }> = [
+  { href: "/",          label: "Home" },
+  { href: "/services",  label: "What I do" },
+  { href: "/portfolio", label: "Portfolio" },
+  { href: "/blog",      label: "Blog" },
+  { href: "/contact",   label: "Get a quote" },
+]
 
-      <!-- Logo / Brand -->
-      <a href="/" class="flex items-center gap-3 group" aria-label="Dave's Guitars — Home">
-        <span class="text-2xl" role="img" aria-hidden="true">🎸</span>
-        <span class="font-serif text-xl font-bold text-wood-200 group-hover:text-wood-100 transition-colors">
-          Dave's Guitars
-        </span>
+function isActive(itemHref: string, currentPath: string): boolean {
+  if (itemHref === "/") return currentPath === "/"
+  return currentPath === itemHref || currentPath.startsWith(itemHref + "/")
+}
+
+function nav(currentPath: string): string {
+  return /* html */ `
+<header class="sticky top-0 z-50 bg-ink border-b border-slate-800">
+  <div class="max-w-site mx-auto px-5 md:px-8">
+    <div class="flex items-center justify-between" style="height: var(--header-h);">
+
+      <a href="/" class="inline-flex items-center no-underline" aria-label="Dave's Guitars — Home">
+        <img src="/assets/logo.png" alt="Dave's Guitars" class="h-10 md:h-11 block" width="120" height="44">
       </a>
 
-      <!-- Desktop nav links -->
-      <ul class="hidden md:flex items-center gap-1" role="list">
-        ${navLink("/", "Home")}
-        ${navLink("/services", "Services")}
-        ${navLink("/portfolio", "Portfolio")}
-        ${navLink("/blog", "Blog")}
-        ${navLink("/contact", "Get a Quote")}
+      <ul class="hidden md:flex items-center gap-7" role="list">
+        ${NAV_ITEMS.map(item => desktopNavLink(item.href, item.label, isActive(item.href, currentPath))).join("")}
       </ul>
 
-      <!-- Mobile menu button -->
-      <button
-        class="md:hidden text-wood-200 hover:text-wood-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-wood-400"
-        aria-label="Toggle menu"
-        aria-expanded="false"
-        aria-controls="mobile-menu"
-        onclick="
-          const menu = document.getElementById('mobile-menu');
-          const expanded = this.getAttribute('aria-expanded') === 'true';
-          this.setAttribute('aria-expanded', String(!expanded));
-          menu.classList.toggle('hidden');
-        "
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
-    </div>
+      <details class="md:hidden relative">
+        <summary
+          class="list-none cursor-pointer p-1.5 rounded-sm transition-colors hover:bg-slate-800"
+          aria-label="Toggle menu"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="4" y1="6"  x2="20" y2="6"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+          </svg>
+        </summary>
+        <ul
+          class="absolute right-0 top-full mt-2 min-w-[220px] bg-slate-900 border border-slate-700 rounded-md shadow-lg overflow-hidden"
+          role="list"
+        >
+          ${NAV_ITEMS.map(item => mobileNavLink(item.href, item.label, isActive(item.href, currentPath))).join("")}
+        </ul>
+      </details>
 
-    <!-- Mobile menu -->
-    <ul id="mobile-menu" class="hidden md:hidden pb-4 space-y-1" role="list">
-      ${mobileNavLink("/", "Home")}
-      ${mobileNavLink("/services", "Services")}
-      ${mobileNavLink("/portfolio", "Portfolio")}
-      ${mobileNavLink("/blog", "Blog")}
-      ${mobileNavLink("/contact", "Get a Quote")}
-    </ul>
-  </nav>
+    </div>
+  </div>
 </header>`
 }
 
-function navLink(href: string, label: string): string {
-  return /* html */ `
-  <li>
-    <a
-      href="${href}"
-      class="px-4 py-2 rounded text-wood-200 hover:text-white hover:bg-guitar-medium transition-colors text-sm font-medium"
-    >${label}</a>
-  </li>`
+function desktopNavLink(href: string, label: string, active: boolean): string {
+  const baseClasses = "relative inline-block py-2 text-sm font-medium font-display no-underline transition-colors"
+  const stateClasses = active
+    ? "text-mint after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-mint"
+    : "text-[#c4c8c4] hover:text-mint"
+  return /* html */ `<li><a href="${href}" class="${baseClasses} ${stateClasses}">${label}</a></li>`
 }
 
-function mobileNavLink(href: string, label: string): string {
-  return /* html */ `
-  <li>
-    <a
-      href="${href}"
-      class="block px-4 py-2 rounded text-wood-200 hover:text-white hover:bg-guitar-medium transition-colors font-medium"
-    >${label}</a>
+function mobileNavLink(href: string, label: string, active: boolean): string {
+  const stateClasses = active ? "text-mint" : "text-[#c4c8c4]"
+  return /* html */ `<li>
+    <a href="${href}" class="block px-4 py-3 text-sm font-medium font-display no-underline border-b border-slate-800 last:border-0 ${stateClasses} hover:bg-slate-800 transition-colors">${label}</a>
   </li>`
 }
 
 function footer(): string {
   const year = new Date().getFullYear()
   return /* html */ `
-<footer class="bg-guitar-dark text-wood-300 mt-16">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<footer class="bg-ink text-[var(--fg-on-dark)] mt-24">
+  <div class="max-w-site mx-auto px-5 md:px-8 py-12">
 
-      <!-- Brand -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
       <div>
-        <h2 class="font-serif text-lg font-bold text-wood-100 mb-2">Dave's Guitars</h2>
-        <p class="text-sm text-wood-400 leading-relaxed">
-          Expert guitar repair, setups, and custom luthier work.
-          Serving guitarists across the UK.
+        <a href="/" class="inline-block no-underline mb-4" aria-label="Dave's Guitars — Home">
+          <img src="/assets/logo.png" alt="Dave's Guitars" class="h-12" width="130" height="48">
+        </a>
+        <p class="text-sm leading-relaxed text-slate-300 max-w-xs">
+          Expert guitar repair, setups, and custom luthier work — serving guitarists across the UK.
         </p>
       </div>
 
-      <!-- Links -->
       <nav aria-label="Footer navigation">
-        <h3 class="text-sm font-semibold text-wood-200 uppercase tracking-wider mb-3">Quick Links</h3>
+        <p class="eyebrow mb-3 text-slate-300">Pages</p>
         <ul class="space-y-2 text-sm" role="list">
-          <li><a href="/services"  class="text-wood-400 hover:text-wood-100 transition-colors">Services &amp; Pricing</a></li>
-          <li><a href="/portfolio" class="text-wood-400 hover:text-wood-100 transition-colors">Portfolio</a></li>
-          <li><a href="/blog"      class="text-wood-400 hover:text-wood-100 transition-colors">Blog</a></li>
-          <li><a href="/contact"   class="text-wood-400 hover:text-wood-100 transition-colors">Get a Quote</a></li>
+          <li><a href="/services"  class="text-slate-300 no-underline hover:text-mint transition-colors">What I do</a></li>
+          <li><a href="/portfolio" class="text-slate-300 no-underline hover:text-mint transition-colors">Portfolio</a></li>
+          <li><a href="/blog"      class="text-slate-300 no-underline hover:text-mint transition-colors">Blog</a></li>
+          <li><a href="/contact"   class="text-slate-300 no-underline hover:text-mint transition-colors">Get a quote</a></li>
         </ul>
       </nav>
 
-      <!-- Contact -->
       <div>
-        <h3 class="text-sm font-semibold text-wood-200 uppercase tracking-wider mb-3">Contact</h3>
-        <p class="text-sm text-wood-400 leading-relaxed">
-          Have a guitar that needs attention?<br>
-          <a href="/contact" class="text-wood-300 hover:text-wood-100 transition-colors underline underline-offset-2">
-            Send a quote request →
+        <p class="eyebrow mb-3 text-slate-300">Get in touch</p>
+        <p class="text-sm leading-relaxed text-slate-300">
+          Got a guitar that needs attention?<br>
+          <a href="/contact" class="text-mint no-underline hover:text-mint-deep transition-colors">
+            Send a message →
           </a>
         </p>
       </div>
     </div>
 
-    <div class="mt-8 pt-6 border-t border-guitar-medium text-center text-xs text-wood-500">
+    <div class="mt-10 pt-6 border-t border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-2 text-xs text-slate-400">
       <p>© ${year} Dave's Guitars. All rights reserved.</p>
+      <p class="eyebrow text-slate-300">Since 1993</p>
     </div>
   </div>
 </footer>`

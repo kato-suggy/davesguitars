@@ -1,0 +1,11 @@
+/* ============================================================================
+   Dave's Guitars — Tailwind entry
+   Compiled by Tailwind CLI to public/styles.css.
+   Order matters: design tokens load first so utilities can reference them.
+   ========================================================================= */
+
+@import "./tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

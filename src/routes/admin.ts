@@ -94,31 +94,31 @@ adminRoute.get("/dashboard", async (c) => {
   const content = /* html */ `
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <div class="flex items-center justify-between mb-8">
-        <h1 class="font-serif text-3xl font-bold text-guitar-dark">Admin Dashboard</h1>
+        <h1 class="font-display text-3xl font-bold text-slate-ink">Admin Dashboard</h1>
         <form method="POST" action="/admin/logout">
-          <button type="submit" class="text-sm text-wood-500 hover:text-wood-700 underline">Log out</button>
+          <button type="submit" class="text-sm text-slate-500 hover:text-slate-700 underline">Log out</button>
         </form>
       </div>
 
       <!-- Blog section -->
       <section class="mb-12">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="font-serif text-xl font-bold text-guitar-dark">Blog Posts</h2>
-          <a href="/admin/posts/new" class="bg-wood-500 hover:bg-wood-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+          <h2 class="font-display text-xl font-bold text-slate-ink">Blog Posts</h2>
+          <a href="/admin/posts/new" class="bg-ink hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
             + New Post
           </a>
         </div>
 
         ${posts.length === 0
-          ? /* html */ `<p class="text-wood-400 text-sm">No posts yet.</p>`
+          ? /* html */ `<p class="text-slate-400 text-sm">No posts yet.</p>`
           : /* html */ `
-            <div class="bg-white rounded-xl border border-wood-100 overflow-hidden shadow-sm">
+            <div class="bg-ivory rounded-xl border border-slate-100 overflow-hidden shadow-sm">
               <table class="w-full text-sm">
-                <thead class="bg-wood-50 border-b border-wood-100">
+                <thead class="bg-bone border-b border-slate-100">
                   <tr>
-                    <th class="text-left px-4 py-3 font-semibold text-wood-700">Title</th>
-                    <th class="text-left px-4 py-3 font-semibold text-wood-700 hidden sm:table-cell">Date</th>
-                    <th class="text-left px-4 py-3 font-semibold text-wood-700">Status</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-700">Title</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-700 hidden sm:table-cell">Date</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-700">Status</th>
                     <th class="px-4 py-3"></th>
                   </tr>
                 </thead>
@@ -133,14 +133,14 @@ adminRoute.get("/dashboard", async (c) => {
       <!-- Portfolio section -->
       <section>
         <div class="flex items-center justify-between mb-4">
-          <h2 class="font-serif text-xl font-bold text-guitar-dark">Portfolio Images</h2>
-          <a href="/admin/portfolio/upload" class="bg-wood-500 hover:bg-wood-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+          <h2 class="font-display text-xl font-bold text-slate-ink">Portfolio Images</h2>
+          <a href="/admin/portfolio/upload" class="bg-ink hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
             + Upload Image
           </a>
         </div>
 
         ${images.length === 0
-          ? /* html */ `<p class="text-wood-400 text-sm">No images yet.</p>`
+          ? /* html */ `<p class="text-slate-400 text-sm">No images yet.</p>`
           : /* html */ `
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="portfolio-grid">
               ${images.map(imageThumb).join("")}
@@ -298,10 +298,10 @@ adminRoute.post("/portfolio/:filename/delete", async (c) => {
 
 function loginPage(error?: string): string {
   return /* html */ `
-  <div class="min-h-screen bg-wood-50 flex items-center justify-center px-4">
-    <div class="bg-white rounded-2xl shadow-lg border border-wood-100 w-full max-w-sm p-8">
-      <h1 class="font-serif text-2xl font-bold text-guitar-dark mb-2 text-center">Dave's Guitars</h1>
-      <p class="text-wood-500 text-sm text-center mb-8">Admin area</p>
+  <div class="min-h-screen bg-bone flex items-center justify-center px-4">
+    <div class="bg-ivory rounded-2xl shadow-lg border border-slate-100 w-full max-w-sm p-8">
+      <h1 class="font-display text-2xl font-bold text-slate-ink mb-2 text-center">Dave's Guitars</h1>
+      <p class="text-slate-500 text-sm text-center mb-8">Admin area</p>
 
       ${error ? /* html */ `
         <div role="alert" class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-6">
@@ -310,7 +310,7 @@ function loginPage(error?: string): string {
 
       <form method="POST" action="/admin/login" class="space-y-5">
         <div>
-          <label for="password" class="block text-sm font-medium text-guitar-dark mb-1.5">Password</label>
+          <label for="password" class="block text-sm font-medium text-slate-ink mb-1.5">Password</label>
           <input
             type="password"
             id="password"
@@ -318,10 +318,10 @@ function loginPage(error?: string): string {
             required
             autofocus
             autocomplete="current-password"
-            class="w-full border border-wood-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400"
+            class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass"
           >
         </div>
-        <button type="submit" class="w-full bg-wood-500 hover:bg-wood-600 text-white font-bold py-3 rounded-lg transition-colors">
+        <button type="submit" class="w-full bg-ink hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition-colors">
           Log In
         </button>
       </form>
@@ -332,16 +332,16 @@ function loginPage(error?: string): string {
 function postRow(p: { slug: string; title: string; createdAt: string; published: boolean }): string {
   const date = new Date(p.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
   return /* html */ `
-  <tr id="post-row-${p.slug}" class="border-b border-wood-50 last:border-0 hover:bg-wood-50 transition-colors">
-    <td class="px-4 py-3 font-medium text-guitar-dark">${escHtml(p.title)}</td>
-    <td class="px-4 py-3 text-wood-400 hidden sm:table-cell">${date}</td>
+  <tr id="post-row-${p.slug}" class="border-b border-wood-50 last:border-0 hover:bg-bone transition-colors">
+    <td class="px-4 py-3 font-medium text-slate-ink">${escHtml(p.title)}</td>
+    <td class="px-4 py-3 text-slate-400 hidden sm:table-cell">${date}</td>
     <td class="px-4 py-3">
-      <span class="text-xs font-semibold px-2 py-1 rounded-full ${p.published ? "bg-green-100 text-green-700" : "bg-wood-100 text-wood-500"}">
+      <span class="text-xs font-semibold px-2 py-1 rounded-full ${p.published ? "bg-green-100 text-green-700" : "bg-bone-2 text-slate-500"}">
         ${p.published ? "Published" : "Draft"}
       </span>
     </td>
     <td class="px-4 py-3 text-right whitespace-nowrap">
-      <a href="/admin/posts/${p.slug}/edit" class="text-wood-500 hover:text-wood-700 text-sm mr-3">Edit</a>
+      <a href="/admin/posts/${p.slug}/edit" class="text-slate-500 hover:text-slate-700 text-sm mr-3">Edit</a>
       <button
         class="text-red-400 hover:text-red-600 text-sm"
         hx-delete="/admin/posts/${p.slug}"
@@ -371,8 +371,8 @@ function postEditor(
   return /* html */ `
   <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
     <div class="flex items-center gap-4 mb-8">
-      <a href="/admin/dashboard" class="text-wood-400 hover:text-wood-600 text-sm">← Dashboard</a>
-      <h1 class="font-serif text-2xl font-bold text-guitar-dark">${isNew ? "New Post" : "Edit Post"}</h1>
+      <a href="/admin/dashboard" class="text-slate-400 hover:text-slate-600 text-sm">← Dashboard</a>
+      <h1 class="font-display text-2xl font-bold text-slate-ink">${isNew ? "New Post" : "Edit Post"}</h1>
     </div>
 
     ${error ? /* html */ `
@@ -382,21 +382,21 @@ function postEditor(
 
     <form method="POST" action="${action}" class="space-y-6">
       <div>
-        <label for="title" class="block text-sm font-medium text-guitar-dark mb-1.5">Title <span class="text-red-500">*</span></label>
+        <label for="title" class="block text-sm font-medium text-slate-ink mb-1.5">Title <span class="text-red-500">*</span></label>
         <input
           type="text" id="title" name="title" required
           value="${escHtml(v.title ?? "")}"
-          class="w-full border border-wood-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400"
+          class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass"
           placeholder="e.g. How I Set Up a Stratocaster"
         >
       </div>
 
       <div>
-        <label for="excerpt" class="block text-sm font-medium text-guitar-dark mb-1.5">Excerpt <span class="text-wood-400 font-normal">(shown in listings)</span></label>
+        <label for="excerpt" class="block text-sm font-medium text-slate-ink mb-1.5">Excerpt <span class="text-slate-400 font-normal">(shown in listings)</span></label>
         <input
           type="text" id="excerpt" name="excerpt"
           value="${escHtml(v.excerpt ?? "")}"
-          class="w-full border border-wood-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400"
+          class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass"
           placeholder="One-sentence summary…"
         >
       </div>
@@ -404,15 +404,15 @@ function postEditor(
       <!-- Editor + preview side by side -->
       <div>
         <div class="flex items-center justify-between mb-1.5">
-          <label for="content" class="block text-sm font-medium text-guitar-dark">
+          <label for="content" class="block text-sm font-medium text-slate-ink">
             Content <span class="text-red-500">*</span>
-            <span class="text-wood-400 font-normal ml-1">(Markdown)</span>
+            <span class="text-slate-400 font-normal ml-1">(Markdown)</span>
           </label>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <textarea
             id="content" name="content" rows="20" required
-            class="border border-wood-200 rounded-lg px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-wood-400 w-full"
+            class="border border-slate-200 rounded-lg px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brass w-full"
             placeholder="Write in Markdown…"
             hx-post="/admin/preview"
             hx-trigger="keyup changed delay:600ms"
@@ -421,9 +421,9 @@ function postEditor(
           >${escHtml(v.content ?? "")}</textarea>
           <div
             id="preview-pane"
-            class="border border-wood-100 rounded-lg px-6 py-4 bg-white min-h-[300px] prose-guitar overflow-auto"
+            class="border border-slate-100 rounded-lg px-6 py-4 bg-ivory min-h-[300px] prose-guitar overflow-auto"
           >
-            <p class="text-wood-300 text-sm italic">Preview will appear as you type…</p>
+            <p class="text-slate-300 text-sm italic">Preview will appear as you type…</p>
           </div>
         </div>
         <style>
@@ -441,14 +441,14 @@ function postEditor(
           ${v.published ? "checked" : ""}
           class="w-4 h-4 accent-wood-500"
         >
-        <label for="published" class="text-sm font-medium text-guitar-dark">Publish (visible on site)</label>
+        <label for="published" class="text-sm font-medium text-slate-ink">Publish (visible on site)</label>
       </div>
 
       <div class="flex gap-4">
-        <button type="submit" class="bg-wood-500 hover:bg-wood-600 text-white font-bold px-8 py-3 rounded-lg transition-colors">
+        <button type="submit" class="bg-ink hover:bg-slate-800 text-white font-bold px-8 py-3 rounded-lg transition-colors">
           ${isNew ? "Create Post" : "Save Changes"}
         </button>
-        <a href="/admin/dashboard" class="px-8 py-3 text-wood-500 hover:text-wood-700 font-medium transition-colors">
+        <a href="/admin/dashboard" class="px-8 py-3 text-slate-500 hover:text-slate-700 font-medium transition-colors">
           Cancel
         </a>
       </div>
@@ -460,8 +460,8 @@ function uploadPage(error?: string): string {
   return /* html */ `
   <div class="max-w-2xl mx-auto px-4 sm:px-6 py-10">
     <div class="flex items-center gap-4 mb-8">
-      <a href="/admin/dashboard" class="text-wood-400 hover:text-wood-600 text-sm">← Dashboard</a>
-      <h1 class="font-serif text-2xl font-bold text-guitar-dark">Upload Portfolio Image</h1>
+      <a href="/admin/dashboard" class="text-slate-400 hover:text-slate-600 text-sm">← Dashboard</a>
+      <h1 class="font-display text-2xl font-bold text-slate-ink">Upload Portfolio Image</h1>
     </div>
 
     ${error ? /* html */ `
@@ -469,36 +469,36 @@ function uploadPage(error?: string): string {
         ${escHtml(error)}
       </div>` : ""}
 
-    <form method="POST" action="/admin/portfolio/upload" enctype="multipart/form-data" class="space-y-6 bg-white rounded-xl border border-wood-100 shadow-sm p-8">
+    <form method="POST" action="/admin/portfolio/upload" enctype="multipart/form-data" class="space-y-6 bg-ivory rounded-xl border border-slate-100 shadow-sm p-8">
       <div>
-        <label for="image" class="block text-sm font-medium text-guitar-dark mb-1.5">Image file <span class="text-red-500">*</span></label>
+        <label for="image" class="block text-sm font-medium text-slate-ink mb-1.5">Image file <span class="text-red-500">*</span></label>
         <input
           type="file" id="image" name="image" required accept="image/jpeg,image/png,image/webp,image/gif"
-          class="w-full text-sm text-wood-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-wood-100 file:text-wood-700 file:font-medium hover:file:bg-wood-200"
+          class="w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-bone-2 file:text-slate-700 file:font-medium hover:file:bg-mint-deep"
         >
-        <p class="text-xs text-wood-400 mt-1">JPG, PNG, WebP, or GIF. Max 10MB.</p>
+        <p class="text-xs text-slate-400 mt-1">JPG, PNG, WebP, or GIF. Max 10MB.</p>
       </div>
 
       <div>
-        <label for="alt" class="block text-sm font-medium text-guitar-dark mb-1.5">Alt text <span class="text-red-500">*</span></label>
+        <label for="alt" class="block text-sm font-medium text-slate-ink mb-1.5">Alt text <span class="text-red-500">*</span></label>
         <input
           type="text" id="alt" name="alt" required
-          class="w-full border border-wood-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400"
+          class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass"
           placeholder="e.g. Stratocaster headstock repair, before and after"
         >
-        <p class="text-xs text-wood-400 mt-1">Describes the image for screen readers and SEO.</p>
+        <p class="text-xs text-slate-400 mt-1">Describes the image for screen readers and SEO.</p>
       </div>
 
       <div>
-        <label for="caption" class="block text-sm font-medium text-guitar-dark mb-1.5">Caption <span class="text-wood-400 font-normal">(optional)</span></label>
+        <label for="caption" class="block text-sm font-medium text-slate-ink mb-1.5">Caption <span class="text-slate-400 font-normal">(optional)</span></label>
         <input
           type="text" id="caption" name="caption"
-          class="w-full border border-wood-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400"
+          class="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass"
           placeholder="e.g. 1972 Telecaster neck reset — back to factory spec"
         >
       </div>
 
-      <button type="submit" class="w-full bg-wood-500 hover:bg-wood-600 text-white font-bold py-3 rounded-lg transition-colors">
+      <button type="submit" class="w-full bg-ink hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition-colors">
         Upload Image
       </button>
     </form>
@@ -507,7 +507,7 @@ function uploadPage(error?: string): string {
 
 function imageThumb(img: { filename: string; alt: string }): string {
   return /* html */ `
-  <div id="img-${img.filename}" class="relative group rounded-lg overflow-hidden bg-wood-100 aspect-square">
+  <div id="img-${img.filename}" class="relative group rounded-lg overflow-hidden bg-bone-2 aspect-square">
     <img
       src="/images/${encodeURIComponent(img.filename)}"
       alt="${escHtml(img.alt)}"

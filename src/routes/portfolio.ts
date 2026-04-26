@@ -9,21 +9,23 @@ portfolioRoute.get("/", async (c) => {
   const images = await getPortfolioImages(c.env.BLOG_KV)
 
   const content = /* html */ `
-    <section class="bg-guitar-dark py-16 text-center">
-      <div class="max-w-3xl mx-auto px-4">
-        <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Portfolio</h1>
-        <p class="text-wood-300 text-lg">A selection of repairs, builds, and restorations.</p>
+    <section class="bg-ink py-14 md:py-20 text-center">
+      <div class="max-w-3xl mx-auto px-5 md:px-8">
+        <p class="eyebrow text-mint mb-3">Portfolio</p>
+        <h1 class="text-white">Recent work</h1>
+        <p class="lead mx-auto" style="color: #d4d8d4; max-width: 36rem;">
+          A selection of repairs, builds, and restorations.
+        </p>
       </div>
     </section>
 
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-20">
       ${images.length === 0
         ? /* html */ `
-          <div class="text-center py-20 text-wood-500">
-            <p class="text-5xl mb-4" role="img" aria-label="Guitar">🪵</p>
-            <p class="text-lg">Portfolio coming soon.</p>
-            <p class="text-sm mt-2">
-              <a href="/contact" class="underline text-wood-600 hover:text-wood-800">Get in touch</a> to discuss your project.
+          <div class="text-center py-20" style="color: var(--fg-muted);">
+            <p class="lead">Portfolio coming soon.</p>
+            <p class="text-sm mt-2" style="margin-bottom: 0;">
+              <a href="/contact">Get in touch</a> to discuss your project.
             </p>
           </div>`
         : /* html */ `
@@ -33,15 +35,15 @@ portfolioRoute.get("/", async (c) => {
       }
     </section>
 
-    <section class="max-w-2xl mx-auto px-4 pb-20 text-center">
-      <p class="text-wood-500 text-sm mb-6">
+    <section class="max-w-2xl mx-auto px-5 md:px-8 pb-20 text-center">
+      <p class="text-sm mb-6" style="color: var(--fg-muted);">
         Interested in having similar work done on your guitar?
       </p>
       <a
         href="/contact"
-        class="inline-block bg-wood-500 hover:bg-wood-600 text-white font-bold px-8 py-3 rounded-lg transition-colors"
+        class="inline-flex items-center gap-2 font-display font-semibold text-sm bg-ink hover:bg-slate-800 text-white px-7 py-3 rounded-md no-underline transition-colors"
       >
-        Request a Quote
+        Request a quote
       </a>
     </section>
   `
@@ -55,7 +57,7 @@ portfolioRoute.get("/", async (c) => {
 
 function imageCard(img: { filename: string; alt: string; caption: string }): string {
   return /* html */ `
-  <figure class="break-inside-avoid mb-4 rounded-xl overflow-hidden shadow-sm border border-wood-100 bg-white">
+  <figure class="break-inside-avoid mb-4 rounded-xl overflow-hidden shadow-sm border border-slate-100 bg-ivory">
     <img
       src="/images/${encodeURIComponent(img.filename)}"
       alt="${escHtml(img.alt)}"
@@ -64,7 +66,7 @@ function imageCard(img: { filename: string; alt: string; caption: string }): str
       class="w-full object-cover"
     >
     ${img.caption ? /* html */ `
-      <figcaption class="px-4 py-3 text-sm text-wood-600 leading-relaxed">
+      <figcaption class="px-4 py-3 text-sm text-slate-600 leading-relaxed">
         ${escHtml(img.caption)}
       </figcaption>
     ` : ""}

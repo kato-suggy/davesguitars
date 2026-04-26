@@ -38,7 +38,7 @@ contactRoute.get("/", (c) => {
     : ""
 
   return c.html(layout(contactPage(successBanner), {
-    title: "Get a Quote",
+    title: "Get a quote",
     description: "Request a guitar repair quote or ask about a custom build. I'll get back to you within 24 hours.",
     canonicalPath: "/contact",
   }))
@@ -70,7 +70,7 @@ contactRoute.post("/", async (c) => {
     const fragment = formFragment({ name, email, guitarType, repairType, message, errors })
     if (isHtmx) return c.html(fragment)
     return c.html(layout(contactPage("", { name, email, guitarType, repairType, message, errors }), {
-      title: "Get a Quote",
+      title: "Get a quote",
       description: "Request a guitar repair quote.",
       canonicalPath: "/contact",
     }))
@@ -85,10 +85,9 @@ contactRoute.post("/", async (c) => {
   if (isHtmx) {
     if (result.ok) {
       return c.html(/* html */ `
-        <div role="alert" class="bg-green-50 border border-green-200 text-green-800 rounded-xl px-6 py-8 text-center">
-          <p class="text-2xl mb-2">🎸</p>
-          <strong class="text-lg block mb-2">Message sent!</strong>
-          <p>I'll get back to you within 24 hours.</p>
+        <div role="alert" class="rounded-lg px-6 py-8 text-center" style="background: var(--success-bg); border: 1px solid #b8d4be; color: var(--success);">
+          <strong class="text-lg block mb-2">Message sent.</strong>
+          <p style="margin: 0; max-width: none;">I'll get back to you within 24 hours.</p>
         </div>
       `)
     } else {
@@ -117,14 +116,17 @@ type FormValues = {
 
 function contactPage(banner: string, values: FormValues = {}): string {
   return /* html */ `
-    <section class="bg-guitar-dark py-16 text-center">
-      <div class="max-w-3xl mx-auto px-4">
-        <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Get a Quote</h1>
-        <p class="text-wood-300 text-lg">Tell me about your guitar and what it needs.</p>
+    <section class="bg-ink py-14 md:py-20 text-center">
+      <div class="max-w-3xl mx-auto px-5 md:px-8">
+        <p class="eyebrow text-mint mb-3">Get in touch</p>
+        <h1 class="text-white">Get a quote</h1>
+        <p class="lead mx-auto" style="color: #d4d8d4; max-width: 36rem;">
+          Tell me about your guitar and what it needs.
+        </p>
       </div>
     </section>
 
-    <section class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
+    <section class="max-w-2xl mx-auto px-5 md:px-8 py-14 md:py-20">
       ${banner}
       <div id="contact-form-wrapper">
         ${formFragment(values)}
@@ -170,7 +172,7 @@ function formFragment(values: FormValues = {}): string {
     })}
 
     <div>
-      <label for="message" class="block text-sm font-medium text-guitar-dark mb-1.5">
+      <label for="message" class="block text-sm font-medium text-slate-ink mb-1.5">
         Tell me more <span class="text-red-500" aria-hidden="true">*</span>
       </label>
       <textarea
@@ -179,7 +181,7 @@ function formFragment(values: FormValues = {}): string {
         rows="5"
         required
         aria-describedby="${errors.message ? "message-error" : ""}"
-        class="w-full border ${errors.message ? "border-red-400 bg-red-50" : "border-wood-200"} rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400 transition"
+        class="w-full border ${errors.message ? "border-red-400 bg-red-50" : "border-slate-200"} rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass transition"
         placeholder="Describe the issue, any relevant history, your timeline…"
       >${message}</textarea>
       ${errors.message ? `<p id="message-error" role="alert" class="mt-1 text-xs text-red-600">${errors.message}</p>` : ""}
@@ -191,12 +193,12 @@ function formFragment(values: FormValues = {}): string {
     <button
       id="submit-btn"
       type="submit"
-      class="w-full bg-wood-500 hover:bg-wood-600 text-white font-bold px-6 py-4 rounded-lg transition-colors shadow-md text-lg htmx-indicator:opacity-60 htmx-indicator:cursor-wait"
+      class="w-full bg-ink hover:bg-slate-800 text-white font-display font-semibold px-6 py-4 rounded-md transition-colors shadow-md text-base htmx-indicator:opacity-60 htmx-indicator:cursor-wait"
     >
-      Send Quote Request
+      Send quote request
     </button>
 
-    <p class="text-xs text-wood-400 text-center">
+    <p class="text-xs text-slate-400 text-center">
       I'll respond within 24 hours. No spam, no mailing lists.
     </p>
   </form>`
@@ -216,7 +218,7 @@ function field(opts: FieldOpts): string {
   const { id, label, type, value, error, required, autocomplete } = opts
   return /* html */ `
   <div>
-    <label for="${id}" class="block text-sm font-medium text-guitar-dark mb-1.5">
+    <label for="${id}" class="block text-sm font-medium text-slate-ink mb-1.5">
       ${label} ${required ? `<span class="text-red-500" aria-hidden="true">*</span>` : ""}
     </label>
     <input
@@ -227,7 +229,7 @@ function field(opts: FieldOpts): string {
       ${required ? "required" : ""}
       ${autocomplete ? `autocomplete="${autocomplete}"` : ""}
       ${error ? `aria-describedby="${id}-error"` : ""}
-      class="w-full border ${error ? "border-red-400 bg-red-50" : "border-wood-200"} rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400 transition"
+      class="w-full border ${error ? "border-red-400 bg-red-50" : "border-slate-200"} rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass transition"
     >
     ${error ? `<p id="${id}-error" role="alert" class="mt-1 text-xs text-red-600">${error}</p>` : ""}
   </div>`
@@ -245,7 +247,7 @@ function select(opts: SelectOpts): string {
   const { id, label, options, value, error } = opts
   return /* html */ `
   <div>
-    <label for="${id}" class="block text-sm font-medium text-guitar-dark mb-1.5">
+    <label for="${id}" class="block text-sm font-medium text-slate-ink mb-1.5">
       ${label} <span class="text-red-500" aria-hidden="true">*</span>
     </label>
     <select
@@ -253,7 +255,7 @@ function select(opts: SelectOpts): string {
       name="${id}"
       required
       ${error ? `aria-describedby="${id}-error"` : ""}
-      class="w-full border ${error ? "border-red-400 bg-red-50" : "border-wood-200"} rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-wood-400 transition bg-white"
+      class="w-full border ${error ? "border-red-400 bg-red-50" : "border-slate-200"} rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brass transition bg-ivory"
     >
       <option value="" ${!value ? "selected" : ""}>Select…</option>
       ${options.map(o => /* html */ `

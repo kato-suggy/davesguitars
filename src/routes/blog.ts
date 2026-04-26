@@ -24,19 +24,21 @@ blogRoute.get("/", async (c) => {
   }
 
   const content = /* html */ `
-    <section class="bg-guitar-dark py-16 text-center">
-      <div class="max-w-3xl mx-auto px-4">
-        <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Blog</h1>
-        <p class="text-wood-300 text-lg">Guitar tips, repair stories, and luthier notes.</p>
+    <section class="bg-ink py-14 md:py-20 text-center">
+      <div class="max-w-3xl mx-auto px-5 md:px-8">
+        <p class="eyebrow text-mint mb-3">Journal</p>
+        <h1 class="text-white">Notes from the bench</h1>
+        <p class="lead mx-auto" style="color: #d4d8d4; max-width: 36rem;">
+          Guitar tips, repair stories, and luthier notes.
+        </p>
       </div>
     </section>
 
-    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-20">
       ${total === 0
         ? /* html */ `
-          <div class="text-center py-20 text-wood-500">
-            <p class="text-5xl mb-4" role="img" aria-label="Guitar">🎸</p>
-            <p class="text-lg">No posts yet — check back soon.</p>
+          <div class="text-center py-20" style="color: var(--fg-muted);">
+            <p class="lead mx-auto">No posts yet — check back soon.</p>
           </div>`
         : /* html */ `
           <div id="post-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -81,42 +83,33 @@ blogRoute.get("/:slug", async (c) => {
   const content = /* html */ `
     <article class="max-w-3xl mx-auto px-4 sm:px-6 py-16">
       <!-- Back link -->
-      <a href="/blog" class="inline-flex items-center gap-2 text-wood-500 hover:text-wood-700 text-sm mb-8 transition-colors">
+      <a href="/blog" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm mb-8 transition-colors">
         ← All posts
       </a>
 
       <header class="mb-10">
-        <time datetime="${post.createdAt}" class="text-xs text-wood-400 uppercase tracking-wider">${date}</time>
-        <h1 class="font-serif text-3xl md:text-4xl font-bold text-guitar-dark mt-2 mb-4 leading-tight">
+        <time datetime="${post.createdAt}" class="text-xs text-slate-400 uppercase tracking-wider">${date}</time>
+        <h1 class="font-display text-3xl md:text-4xl font-bold text-slate-ink mt-2 mb-4 leading-tight">
           ${escHtml(post.title)}
         </h1>
-        ${post.excerpt ? /* html */ `<p class="text-wood-600 text-lg leading-relaxed">${escHtml(post.excerpt)}</p>` : ""}
+        ${post.excerpt ? /* html */ `<p class="text-slate-600 text-lg leading-relaxed">${escHtml(post.excerpt)}</p>` : ""}
       </header>
 
-      <!-- Prose content -->
-      <div class="prose prose-guitar">
+      <!-- Prose content — element styles come from src/styles/tokens.css -->
+      <div class="prose-body">
         ${htmlContent}
       </div>
 
       <style>
-        .prose-guitar { color: #3d1f08; line-height: 1.75; }
-        .prose-guitar h2 { font-family: Georgia, serif; font-size: 1.5rem; font-weight: 700; margin: 2rem 0 0.75rem; color: #1a0e05; }
-        .prose-guitar h3 { font-family: Georgia, serif; font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
-        .prose-guitar p  { margin-bottom: 1.25rem; }
-        .prose-guitar ul, .prose-guitar ol { margin: 1rem 0 1.25rem 1.5rem; }
-        .prose-guitar li { margin-bottom: 0.4rem; }
-        .prose-guitar a  { color: #b86615; text-decoration: underline; }
-        .prose-guitar a:hover { color: #924d13; }
-        .prose-guitar blockquote { border-left: 3px solid #e9bc6d; padding-left: 1rem; color: #6b3a1a; font-style: italic; margin: 1.5rem 0; }
-        .prose-guitar code { background: #faefd9; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
-        .prose-guitar pre  { background: #1a0e05; color: #f3d9a8; padding: 1rem 1.25rem; border-radius: 8px; overflow-x: auto; margin: 1.5rem 0; }
-        .prose-guitar pre code { background: none; padding: 0; }
-        .prose-guitar img  { max-width: 100%; border-radius: 8px; margin: 1.5rem 0; }
-        .prose-guitar hr  { border: none; border-top: 1px solid #f3d9a8; margin: 2rem 0; }
+        .prose-body ul, .prose-body ol { margin: var(--space-4) 0 var(--space-5) var(--space-5); }
+        .prose-body li  { margin-bottom: var(--space-2); }
+        .prose-body img { max-width: 100%; border-radius: var(--radius-md); margin: var(--space-6) 0; display: block; }
+        .prose-body h2  { margin-top: var(--space-7); }
+        .prose-body h3  { margin-top: var(--space-6); }
       </style>
 
-      <footer class="mt-16 pt-8 border-t border-wood-100">
-        <a href="/contact" class="inline-block bg-wood-500 hover:bg-wood-600 text-white font-bold px-6 py-3 rounded-lg transition-colors">
+      <footer class="mt-16 pt-8 border-t border-slate-100">
+        <a href="/contact" class="inline-flex items-center gap-2 font-display font-semibold text-sm bg-ink hover:bg-slate-800 text-white px-7 py-3 rounded-md no-underline transition-colors">
           Book a repair →
         </a>
       </footer>
@@ -146,16 +139,16 @@ function postCard(p: { slug: string; title: string; excerpt: string; createdAt: 
     day: "numeric", month: "short", year: "numeric",
   })
   return /* html */ `
-  <article class="bg-white rounded-xl shadow-sm border border-wood-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+  <article class="bg-ivory rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
     <div class="p-6 flex-1">
-      <time datetime="${p.createdAt}" class="text-xs text-wood-400 uppercase tracking-wide">${date}</time>
-      <h2 class="font-serif text-xl font-bold text-guitar-dark mt-2 mb-3 leading-snug">
-        <a href="/blog/${p.slug}" class="hover:text-wood-700 transition-colors">${escHtml(p.title)}</a>
+      <time datetime="${p.createdAt}" class="text-xs text-slate-400 uppercase tracking-wide">${date}</time>
+      <h2 class="font-display text-xl font-bold text-slate-ink mt-2 mb-3 leading-snug">
+        <a href="/blog/${p.slug}" class="hover:text-slate-700 transition-colors">${escHtml(p.title)}</a>
       </h2>
-      ${p.excerpt ? /* html */ `<p class="text-wood-500 text-sm leading-relaxed line-clamp-3">${escHtml(p.excerpt)}</p>` : ""}
+      ${p.excerpt ? /* html */ `<p class="text-slate-500 text-sm leading-relaxed line-clamp-3">${escHtml(p.excerpt)}</p>` : ""}
     </div>
     <div class="px-6 pb-5">
-      <a href="/blog/${p.slug}" class="text-sm font-medium text-wood-600 hover:text-wood-800 transition-colors">
+      <a href="/blog/${p.slug}" class="text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">
         Read more →
       </a>
     </div>
@@ -170,7 +163,7 @@ function pagination(page: number, totalPages: number): string {
   return /* html */ `
   <div class="mt-10 text-center">
     <button
-      class="bg-wood-100 hover:bg-wood-200 text-wood-700 font-medium px-8 py-3 rounded-lg transition-colors"
+      class="bg-bone-2 hover:bg-mint-deep text-slate-700 font-medium px-8 py-3 rounded-lg transition-colors"
       hx-get="/blog?page=${nextPage}"
       hx-target="#post-grid"
       hx-swap="beforeend"
@@ -180,7 +173,7 @@ function pagination(page: number, totalPages: number): string {
     </button>
     <!-- No-JS fallback -->
     <noscript>
-      <a href="/blog?page=${nextPage}" class="inline-block bg-wood-100 hover:bg-wood-200 text-wood-700 font-medium px-8 py-3 rounded-lg">
+      <a href="/blog?page=${nextPage}" class="inline-block bg-bone-2 hover:bg-mint-deep text-slate-700 font-medium px-8 py-3 rounded-lg">
         Next page →
       </a>
     </noscript>

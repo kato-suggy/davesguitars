@@ -1,5 +1,4 @@
 import { Hono } from "hono"
-import { serveStatic } from "hono/cloudflare-workers"
 import type { Env } from "./types"
 import { layout } from "./templates/layout"
 
@@ -12,9 +11,9 @@ import { adminRoute }     from "./routes/admin"
 
 const app = new Hono<{ Bindings: Env }>()
 
-// Static assets (htmx.min.js, styles.css via Workers Assets)
-app.use("/htmx.min.js", serveStatic({ path: "./htmx.min.js" }))
-app.use("/styles.css",  serveStatic({ path: "./styles.css" }))
+// Static files in public/ (styles.css, fonts, logo, etc.) are served directly
+// by Cloudflare Workers Assets via `[assets] directory = "./public"` in
+// wrangler.toml — they never hit this Worker.
 
 // Public image serving from R2
 app.get("/images/:filename", async (c) => {
@@ -60,14 +59,17 @@ app.get("/robots.txt", (c) => {
 app.notFound((c) => {
   return c.html(
     layout(/* html */ `
-      <section class="max-w-2xl mx-auto px-4 py-32 text-center">
-        <h1 class="font-serif text-5xl font-bold text-guitar-dark mb-4">404</h1>
-        <p class="text-wood-600 mb-8">That page doesn't exist — like a guitar string tuned a fifth too high.</p>
-        <a href="/" class="inline-block bg-wood-500 hover:bg-wood-600 text-white font-semibold px-6 py-3 rounded transition-colors">
-          Back to Home
+      <section class="max-w-2xl mx-auto px-5 md:px-8 py-20 md:py-32 text-center">
+        <p class="eyebrow mb-3" style="color: var(--brass);">404</p>
+        <h1>Page not found</h1>
+        <p class="lead mx-auto mb-8" style="max-width: 32rem;">
+          That page doesn't exist — like a guitar string tuned a fifth too high.
+        </p>
+        <a href="/" class="inline-flex items-center gap-2 font-display font-semibold text-sm bg-ink hover:bg-slate-800 text-white px-7 py-3 rounded-md no-underline transition-colors">
+          Back to home
         </a>
       </section>
-    `, { title: "Page Not Found" }),
+    `, { title: "Page not found" }),
     404
   )
 })

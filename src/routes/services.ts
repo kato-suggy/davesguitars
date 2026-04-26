@@ -5,7 +5,6 @@ import { layout } from "../templates/layout"
 export const servicesRoute = new Hono<{ Bindings: Env }>()
 
 type Service = {
-  icon: string
   title: string
   description: string
   items: string[]
@@ -15,8 +14,7 @@ type Service = {
 
 const SERVICES: Service[] = [
   {
-    icon: "🔧",
-    title: "Full Setup",
+    title: "Full setup",
     description: "The most important thing you can do for your guitar. A proper setup makes every guitar play better.",
     items: [
       "Truss rod adjustment",
@@ -30,7 +28,6 @@ const SERVICES: Service[] = [
     turnaround: "2–4 days",
   },
   {
-    icon: "🪜",
     title: "Fretwork",
     description: "Uneven frets cause buzzing and dead spots. Proper fretwork restores a smooth, even playing surface.",
     items: [
@@ -44,7 +41,6 @@ const SERVICES: Service[] = [
     turnaround: "3–7 days",
   },
   {
-    icon: "⚡",
     title: "Electronics",
     description: "From crackly pots to full rewires — clean, quiet electronics make a huge difference.",
     items: [
@@ -59,8 +55,7 @@ const SERVICES: Service[] = [
     turnaround: "1–3 days",
   },
   {
-    icon: "🔩",
-    title: "Structural Repairs",
+    title: "Structural repairs",
     description: "Accidents happen. Proper repairs with the right glues and techniques can make a guitar stronger than before.",
     items: [
       "Headstock break repair",
@@ -73,7 +68,6 @@ const SERVICES: Service[] = [
     turnaround: "1–2 weeks",
   },
   {
-    icon: "✨",
     title: "Restoration",
     description: "Bringing neglected or vintage instruments back to life, with respect for what makes them special.",
     items: [
@@ -87,8 +81,7 @@ const SERVICES: Service[] = [
     turnaround: "1–3 weeks",
   },
   {
-    icon: "🪵",
-    title: "Custom Builds",
+    title: "Custom builds",
     description: "A guitar built specifically for you — your specs, your woods, your sound. From scratch.",
     items: [
       "Design consultation",
@@ -105,62 +98,54 @@ const SERVICES: Service[] = [
 servicesRoute.get("/", (c) => {
   const content = /* html */ `
     <!-- Page header -->
-    <section class="bg-guitar-dark py-16 text-center">
-      <div class="max-w-3xl mx-auto px-4">
-        <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Services &amp; Pricing</h1>
-        <p class="text-wood-300 text-lg">
+    <section class="bg-ink py-14 md:py-20 text-center">
+      <div class="max-w-3xl mx-auto px-5 md:px-8">
+        <p class="eyebrow text-mint mb-3">Services &amp; pricing</p>
+        <h1 class="text-white">What I do</h1>
+        <p class="lead mx-auto" style="color: #d4d8d4; max-width: 36rem;">
           All prices are starting points. I'll give you an exact quote once I've assessed your instrument.
         </p>
       </div>
     </section>
 
     <!-- Services grid -->
-    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <section class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         ${SERVICES.map(serviceCard).join("")}
       </div>
     </section>
 
     <!-- Notes -->
-    <section class="bg-wood-100 border-y border-wood-200">
-      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <h2 class="font-serif text-2xl font-bold text-guitar-dark mb-6">Good to Know</h2>
-        <ul class="space-y-3 text-wood-700">
-          <li class="flex gap-3">
-            <span class="text-wood-400 mt-1" aria-hidden="true">→</span>
-            <span>All prices are subject to a no-obligation assessment. Complex jobs may cost more — I'll always tell you before I start.</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-wood-400 mt-1" aria-hidden="true">→</span>
-            <span>Parts are charged at cost. I don't mark up components — you pay what I pay.</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-wood-400 mt-1" aria-hidden="true">→</span>
-            <span>I accept guitars by post (tracked, fully insured) or in person by appointment.</span>
-          </li>
-          <li class="flex gap-3">
-            <span class="text-wood-400 mt-1" aria-hidden="true">→</span>
-            <span>Payment on collection or via bank transfer. 50% deposit required for custom builds.</span>
-          </li>
+    <section class="bg-mint border-y border-mint-deep">
+      <div class="max-w-3xl mx-auto px-5 md:px-8 py-12">
+        <p class="eyebrow mb-3" style="color: var(--slate-700);">Good to know</p>
+        <h2>Honest, no-surprises pricing</h2>
+        <ul class="space-y-3 text-slate-700" role="list">
+          ${noteItem("All prices are subject to a no-obligation assessment. Complex jobs may cost more — I'll always tell you before I start.")}
+          ${noteItem("Parts are charged at cost. I don't mark up components — you pay what I pay.")}
+          ${noteItem("I accept guitars by post (tracked, fully insured) or in person by appointment.")}
+          ${noteItem("Payment on collection or via bank transfer. 50% deposit required for custom builds.")}
         </ul>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="max-w-2xl mx-auto px-4 py-20 text-center">
-      <h2 class="font-serif text-3xl font-bold text-guitar-dark mb-4">Not sure what your guitar needs?</h2>
-      <p class="text-wood-600 mb-8">Send me a message and I'll take a look. No commitment required.</p>
+    <section class="max-w-2xl mx-auto px-5 md:px-8 py-14 md:py-20 text-center">
+      <h2>Not sure what your guitar needs?</h2>
+      <p class="lead mx-auto mb-7" style="max-width: 32rem;">
+        Send me a message and I'll take a look. No commitment required.
+      </p>
       <a
         href="/contact"
-        class="inline-block bg-wood-500 hover:bg-wood-600 text-white font-bold px-10 py-4 rounded-lg text-lg transition-colors shadow-md"
+        class="inline-flex items-center justify-center font-display font-semibold text-sm bg-ink hover:bg-slate-800 text-white px-7 py-3 rounded-md no-underline transition-colors shadow-md"
       >
-        Get a Free Assessment
+        Get a free assessment
       </a>
     </section>
   `
 
   return c.html(layout(content, {
-    title: "Services & Pricing",
+    title: "Services & pricing",
     description: "Guitar repair services including setups, fretwork, electronics, structural repairs, restoration, and custom builds. Starting from £25.",
     canonicalPath: "/services",
   }))
@@ -168,32 +153,34 @@ servicesRoute.get("/", (c) => {
 
 function serviceCard(s: Service): string {
   return /* html */ `
-  <article class="bg-white rounded-xl shadow-sm border border-wood-100 overflow-hidden hover:shadow-md transition-shadow">
-    <div class="bg-wood-50 px-6 py-5 border-b border-wood-100">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <span class="text-3xl" role="img" aria-hidden="true">${s.icon}</span>
-          <h2 class="font-serif text-xl font-bold text-guitar-dark">${s.title}</h2>
-        </div>
-        <div class="text-right">
-          <p class="text-xs text-wood-500 uppercase tracking-wide">From</p>
-          <p class="font-bold text-wood-600 text-xl">${s.priceFrom}</p>
+  <article class="bg-ivory rounded-lg border border-slate-100 overflow-hidden transition-colors hover:border-slate-300">
+    <header class="bg-bone-2 px-6 py-5 border-b border-slate-100">
+      <div class="flex items-baseline justify-between gap-4">
+        <h2 class="font-display text-xl font-bold text-slate-ink m-0">${s.title}</h2>
+        <div class="text-right whitespace-nowrap">
+          <p class="eyebrow m-0" style="color: var(--fg-muted);">From</p>
+          <p class="font-display font-bold text-xl m-0" style="color: var(--brass);">${s.priceFrom}</p>
         </div>
       </div>
-    </div>
+    </header>
     <div class="px-6 py-5">
-      <p class="text-wood-600 text-sm mb-4 leading-relaxed">${s.description}</p>
-      <ul class="space-y-1.5 mb-4">
+      <p class="text-sm leading-relaxed mb-4" style="color: var(--fg-muted); max-width: none;">${s.description}</p>
+      <ul class="space-y-1.5 mb-4 list-disc list-inside marker:text-brass" role="list">
         ${s.items.map(item => /* html */ `
-          <li class="flex items-start gap-2 text-sm text-wood-700">
-            <span class="text-wood-400 mt-0.5" aria-hidden="true">✓</span>
-            ${item}
-          </li>
+          <li class="text-sm text-slate-700">${item}</li>
         `).join("")}
       </ul>
-      <p class="text-xs text-wood-400 mt-4 pt-4 border-t border-wood-100">
-        Typical turnaround: <strong class="text-wood-600">${s.turnaround}</strong>
+      <p class="text-xs mt-4 pt-4 border-t border-slate-100" style="color: var(--fg-subtle);">
+        Typical turnaround: <strong style="color: var(--slate-700);">${s.turnaround}</strong>
       </p>
     </div>
   </article>`
+}
+
+function noteItem(text: string): string {
+  return /* html */ `
+  <li class="flex gap-3">
+    <span class="mt-1" style="color: var(--brass);" aria-hidden="true">→</span>
+    <span>${text}</span>
+  </li>`
 }
