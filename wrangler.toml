@@ -18,9 +18,13 @@ bucket_name = "davesguitars-images"
 [vars]
 SITE_URL = "https://davesguitar.co.uk"
 SITE_NAME = "Dave's Guitars"
+# Google Place ID for Dave's Google Business listing.
+# Public identifier (not a secret) — kept here so it ships with the worker.
+PLACE_ID = "ChIJmVPVDflufkgRuAgB93v-5Bw"
 
-# Secrets — set with: wrangler secret put <NAME>
-# ADMIN_PASSWORD_HASH  - bcrypt hash of Dave's password
-# SESSION_SECRET       - random 32-byte hex string
-# RESEND_API_KEY       - from resend.com
-# CONTACT_EMAIL        - Dave's email address
+# Secrets — set locally in .dev.vars (gitignored), in prod with: wrangler secret put <NAME>
+# ADMIN_PASSWORD_HASH      - bcrypt hash of Dave's password
+# SESSION_SECRET           - random 32-byte hex string
+# RESEND_API_KEY           - from resend.com
+# CONTACT_EMAIL            - Dave's email address
+# GOOGLE_PLACES_API_KEY    - Maps Platform key restricted to Places API (legacy)

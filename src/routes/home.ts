@@ -1,6 +1,7 @@
 import { Hono } from "hono"
-import type { Env } from "../types"
+import type { Env, Review } from "../types"
 import { layout } from "../templates/layout"
+import { fetchReviews } from "../lib/reviews"
 
 export const homeRoute = new Hono<{ Bindings: Env }>()
 
@@ -18,8 +19,13 @@ const LOCAL_BUSINESS_JSON_LD = JSON.stringify({
   "foundingDate": "1993",
 })
 
-homeRoute.get("/", (c) => {
+homeRoute.get("/", async (c) => {
   const head = `<script type="application/ld+json">${LOCAL_BUSINESS_JSON_LD}</script>`
+
+  // Reviews section is hidden entirely if the API call fails or no reviews
+  // come back — the design system says broken trust signals damage credibility
+  // more than missing ones.
+  const reviews = await fetchReviews(c.env.PLACE_ID, c.env.GOOGLE_PLACES_API_KEY)
 
   const content = /* html */ `
     <!-- Hero — logo-led, on ink -->
@@ -82,6 +88,8 @@ homeRoute.get("/", (c) => {
         </a>
       </div>
     </section>
+
+    ${reviews.length > 0 ? reviewsSection(reviews) : ""}
 
     <!-- About / trust strip — mint accent panel (used once per page) -->
     <section class="bg-mint">
@@ -159,4 +167,62 @@ function ghostLightButton(href: string, label: string): string {
     href="${href}"
     class="inline-flex items-center justify-center gap-2 font-display font-semibold text-sm text-mint border border-mint/30 px-7 py-3 rounded-md no-underline transition-colors hover:bg-mint/10 hover:border-mint"
   >${label}</a>`
+}
+
+function reviewsSection(reviews: Review[]): string {
+  return /* html */ `
+    <!-- Recent Google reviews -->
+    <section class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-20">
+      <div class="text-center mb-10 md:mb-12">
+        <p class="eyebrow mb-3">Recent reviews</p>
+        <h2>What people say</h2>
+        <p class="lead mx-auto" style="max-width: 32rem;">
+          Real reviews from Google — never fabricated, never edited.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        ${reviews.map(reviewCard).join("")}
+      </div>
+    </section>
+  `
+}
+
+function reviewCard(r: Review): string {
+  return /* html */ `
+  <article class="bg-ivory rounded-lg border border-slate-100 p-6 flex flex-col">
+    <p
+      class="font-display text-lg mb-3"
+      style="color: var(--brass); letter-spacing: 0.08em;"
+      role="img"
+      aria-label="${r.rating} out of 5 stars"
+    >
+      <span aria-hidden="true">${"★".repeat(r.rating)}<span style="color: var(--slate-200);">${"★".repeat(5 - r.rating)}</span></span>
+    </p>
+
+    <p
+      class="line-clamp-2 italic mb-5 flex-1"
+      style="color: var(--slate-700); font-family: var(--font-body); line-height: 1.55; max-width: none;"
+    >${escHtml(r.text)}</p>
+
+    <footer class="flex items-center gap-3 mt-auto">
+      <span
+        class="inline-flex items-center justify-center font-display font-semibold text-sm"
+        style="width: 36px; height: 36px; border-radius: 999px; background: var(--mint); color: var(--slate-ink); border: 1px solid var(--mint-deep);"
+        aria-hidden="true"
+      >${escHtml(r.authorInitials)}</span>
+      <div>
+        <p class="font-display font-medium text-sm" style="color: var(--slate-ink); margin: 0; max-width: none;">${escHtml(r.authorName)}</p>
+        ${r.relativeTime ? /* html */ `<p class="text-xs" style="color: var(--fg-subtle); margin: 0;">${escHtml(r.relativeTime)}</p>` : ""}
+      </div>
+    </footer>
+  </article>`
+}
+
+function escHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
 }

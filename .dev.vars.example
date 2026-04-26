@@ -1,0 +1,35 @@
+# Local development secrets — copy this file to `.dev.vars` and fill in values.
+# `.dev.vars` is gitignored; never commit real keys.
+#
+# Wrangler reads this file automatically when you run `npm run dev`.
+# For production, set each secret with:    wrangler secret put <NAME>
+
+# Google Maps Platform API key — restricted to Places API (legacy).
+# Used by src/lib/reviews.ts to fetch the Google Business reviews feed.
+# Without this, the reviews section silently disappears on the homepage.
+GOOGLE_PLACES_API_KEY=
+
+# Resend API key (for the contact form). Get from https://resend.com.
+# Without this, /contact form submissions will fail.
+RESEND_API_KEY=
+
+# Email address that contact form submissions are sent TO.
+CONTACT_EMAIL=
+
+# ---- Phase 2+ (not needed for the current build) ----
+
+# Anthropic API key for the AI repair estimator (Phase 3).
+# ANTHROPIC_API_KEY=
+
+# Service-account JSON for Google Drive (Phase 2). Single-line JSON string.
+# GOOGLE_SERVICE_ACCOUNT_JSON=
+
+# ---- Legacy (admin route — gets deleted in Phase 1 step 4) ----
+
+# SHA-256 hex of the admin password. Generate with:
+#   node -e "const c=require('crypto');process.stdout.write(c.createHash('sha256').update('yourpassword').digest('hex'))"
+ADMIN_PASSWORD_HASH=
+
+# 32-byte random hex for HMAC session signing.
+# Generate with:    openssl rand -hex 32
+SESSION_SECRET=
