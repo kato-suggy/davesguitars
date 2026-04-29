@@ -2,6 +2,7 @@ import { Hono } from "hono"
 import type { Env } from "../types"
 import { layout } from "../templates/layout"
 import { sendContactEmail } from "../lib/email"
+import site from "../../content/site.json"
 
 export const contactRoute = new Hono<{ Bindings: Env }>()
 
@@ -27,19 +28,19 @@ const GUITAR_TYPES = [
 
 contactRoute.get("/", (c) => {
   const message = c.req.query("message")
-  const successBanner = message === "sent"
+  const banner = message === "sent"
     ? /* html */ `<div role="alert" class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-6 py-4 mb-8 text-center">
         <strong>Message sent!</strong> I'll get back to you within 24 hours.
        </div>`
     : message === "error"
     ? /* html */ `<div role="alert" class="bg-red-50 border border-red-200 text-red-800 rounded-lg px-6 py-4 mb-8 text-center">
-        <strong>Something went wrong.</strong> Please try again or email me directly.
+        <strong>Something went wrong.</strong> Please try again, or contact me directly using the details above.
        </div>`
     : ""
 
-  return c.html(layout(contactPage(successBanner), {
+  return c.html(layout(contactPage(banner), {
     title: "Get a quote",
-    description: "Request a guitar repair quote or ask about a custom build. I'll get back to you within 24 hours.",
+    description: "Request a guitar repair quote, or contact Dave directly by phone, email, or Instagram.",
     canonicalPath: "/contact",
   }))
 })
@@ -53,7 +54,6 @@ contactRoute.post("/", async (c) => {
   const repairType = (form.get("repairType")  as string ?? "").trim()
   const message    = (form.get("message")     as string ?? "").trim()
 
-  // Validation
   const errors: Record<string, string> = {}
   if (!name)       errors.name       = "Please enter your name."
   if (!email || !email.includes("@"))
@@ -63,12 +63,7 @@ contactRoute.post("/", async (c) => {
   if (!message || message.length < 10)
                    errors.message    = "Please describe what your guitar needs (at least 10 characters)."
 
-  // If HTMX request and validation fails — return just the form fragment
-  const isHtmx = c.req.header("HX-Request") === "true"
-
   if (Object.keys(errors).length > 0) {
-    const fragment = formFragment({ name, email, guitarType, repairType, message, errors })
-    if (isHtmx) return c.html(fragment)
     return c.html(layout(contactPage("", { name, email, guitarType, repairType, message, errors }), {
       title: "Get a quote",
       description: "Request a guitar repair quote.",
@@ -76,33 +71,12 @@ contactRoute.post("/", async (c) => {
     }))
   }
 
-  // Send email
   const result = await sendContactEmail(
     { name, email, guitarType, repairType, message },
     { RESEND_API_KEY: c.env.RESEND_API_KEY, CONTACT_EMAIL: c.env.CONTACT_EMAIL }
   )
 
-  if (isHtmx) {
-    if (result.ok) {
-      return c.html(/* html */ `
-        <div role="alert" class="rounded-lg px-6 py-8 text-center" style="background: var(--success-bg); border: 1px solid #b8d4be; color: var(--success);">
-          <strong class="text-lg block mb-2">Message sent.</strong>
-          <p style="margin: 0; max-width: none;">I'll get back to you within 24 hours.</p>
-        </div>
-      `)
-    } else {
-      return c.html(/* html */ `
-        <div role="alert" class="bg-red-50 border border-red-200 text-red-800 rounded-xl px-6 py-6 text-center">
-          <strong>Something went wrong.</strong> Please try again or email me directly.
-        </div>
-        ${formFragment({ name, email, guitarType, repairType, message, errors: {} })}
-      `)
-    }
-  }
-
-  // Non-HTMX: redirect with query param
-  const redirectTo = result.ok ? "/contact?message=sent" : "/contact?message=error"
-  return c.redirect(redirectTo, 303)
+  return c.redirect(result.ok ? "/contact?message=sent" : "/contact?message=error", 303)
 })
 
 type FormValues = {
@@ -115,22 +89,72 @@ type FormValues = {
 }
 
 function contactPage(banner: string, values: FormValues = {}): string {
+  const { hero } = site.contactPage
+
   return /* html */ `
     <section class="bg-ink py-14 md:py-20 text-center">
       <div class="max-w-3xl mx-auto px-5 md:px-8">
-        <p class="eyebrow text-mint mb-3">Get in touch</p>
-        <h1 class="text-white">Get a quote</h1>
+        <p class="eyebrow text-mint mb-3">${hero.eyebrow}</p>
+        <h1 class="text-white">${hero.heading}</h1>
         <p class="lead mx-auto" style="color: #d4d8d4; max-width: 36rem;">
-          Tell me about your guitar and what it needs.
+          ${hero.lead}
         </p>
       </div>
     </section>
 
-    <section class="max-w-2xl mx-auto px-5 md:px-8 py-14 md:py-20">
+    ${directContactBlock()}
+
+    <section class="max-w-2xl mx-auto px-5 md:px-8 pb-14 md:pb-20">
       ${banner}
-      <div id="contact-form-wrapper">
-        ${formFragment(values)}
+      ${formFragment(values)}
+    </section>
+  `
+}
+
+function directContactBlock(): string {
+  const c = site.contact
+  return /* html */ `
+    <section class="max-w-3xl mx-auto px-5 md:px-8 pt-12 md:pt-16">
+      <div class="bg-mint border border-mint-deep rounded-lg p-6 md:p-8">
+        <p class="eyebrow mb-3" style="color: var(--slate-700);">Prefer to talk?</p>
+        <h2 class="m-0 mb-4" style="color: var(--slate-ink);">Call, email, or DM</h2>
+        <p class="mb-5" style="color: var(--slate-ink); max-width: none;">
+          Many customers prefer a direct chat to filling in a form — that's fine. Reach me any of these ways:
+        </p>
+        <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3" role="list">
+          <li>
+            <a href="tel:${c.phoneTel}"
+               class="block bg-ivory border border-mint-deep rounded-md px-4 py-3 no-underline transition-colors hover:bg-bone-2"
+               style="color: var(--slate-ink);">
+              <p class="eyebrow m-0 mb-1" style="color: var(--slate-600);">Phone</p>
+              <p class="font-display font-semibold text-base m-0">${c.phoneDisplay}</p>
+            </a>
+          </li>
+          <li>
+            <a href="mailto:${c.email}"
+               class="block bg-ivory border border-mint-deep rounded-md px-4 py-3 no-underline transition-colors hover:bg-bone-2"
+               style="color: var(--slate-ink);">
+              <p class="eyebrow m-0 mb-1" style="color: var(--slate-600);">Email</p>
+              <p class="font-display font-semibold text-sm m-0 break-all">${c.email}</p>
+            </a>
+          </li>
+          <li>
+            <a href="${c.instagramUrl}" rel="me noopener" target="_blank"
+               class="block bg-ivory border border-mint-deep rounded-md px-4 py-3 no-underline transition-colors hover:bg-bone-2"
+               style="color: var(--slate-ink);">
+              <p class="eyebrow m-0 mb-1" style="color: var(--slate-600);">Instagram</p>
+              <p class="font-display font-semibold text-base m-0">${c.instagramHandle}</p>
+            </a>
+          </li>
+        </ul>
+        <p class="text-xs mt-4 mb-0" style="color: var(--slate-700);">
+          Workshop in ${c.addressLocality}, ${c.addressRegion} · ${c.postcode}
+        </p>
       </div>
+
+      <p class="text-center text-sm mt-8" style="color: var(--fg-muted);">
+        — or send the details below and I'll come back to you —
+      </p>
     </section>
   `
 }
@@ -139,15 +163,7 @@ function formFragment(values: FormValues = {}): string {
   const { name = "", email = "", guitarType = "", repairType = "", message = "", errors = {} } = values
 
   return /* html */ `
-  <form
-    action="/contact"
-    method="POST"
-    class="space-y-6"
-    hx-post="/contact"
-    hx-target="#contact-form-wrapper"
-    hx-swap="innerHTML"
-    hx-indicator="#submit-btn"
-  >
+  <form action="/contact" method="POST" class="space-y-6">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       ${field({
         id: "name", label: "Your name", type: "text",
@@ -191,9 +207,8 @@ function formFragment(values: FormValues = {}): string {
     <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
 
     <button
-      id="submit-btn"
       type="submit"
-      class="w-full bg-ink hover:bg-slate-800 text-white font-display font-semibold px-6 py-4 rounded-md transition-colors shadow-md text-base htmx-indicator:opacity-60 htmx-indicator:cursor-wait"
+      class="w-full bg-ink hover:bg-slate-800 text-white font-display font-semibold px-6 py-4 rounded-md transition-colors shadow-md text-base"
     >
       Send quote request
     </button>

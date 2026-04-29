@@ -2,6 +2,7 @@ import { Hono } from "hono"
 import type { Env, Review } from "../types"
 import { layout } from "../templates/layout"
 import { fetchReviews } from "../lib/reviews"
+import site from "../../content/site.json"
 
 export const homeRoute = new Hono<{ Bindings: Env }>()
 
@@ -9,14 +10,24 @@ const LOCAL_BUSINESS_JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": "Dave's Guitars",
-  "description": "Expert guitar repair, setups, and custom luthier work in the UK. Since 1993.",
+  "description": "Stringed instrument repair and luthier work in North Shields. Since 1993.",
   "url": "https://davesguitar.co.uk",
   "image": "https://davesguitar.co.uk/assets/logo-square.png",
+  "telephone": site.contact.phoneTel,
+  "email": site.contact.email,
   "priceRange": "££",
   "currenciesAccepted": "GBP",
   "paymentAccepted": "Cash, Bank Transfer",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": site.contact.addressLocality,
+    "addressRegion":   site.contact.addressRegion,
+    "postalCode":      site.contact.postcode,
+    "addressCountry":  site.contact.country,
+  },
   "areaServed": "United Kingdom",
   "foundingDate": "1993",
+  "sameAs": [site.contact.instagramUrl],
 })
 
 homeRoute.get("/", async (c) => {
@@ -26,6 +37,8 @@ homeRoute.get("/", async (c) => {
   // come back — the design system says broken trust signals damage credibility
   // more than missing ones.
   const reviews = await fetchReviews(c.env.PLACE_ID, c.env.GOOGLE_PLACES_API_KEY)
+
+  const { hero, about, finalCta } = site.home
 
   const content = /* html */ `
     <!-- Hero — logo-led, on ink -->
@@ -38,7 +51,7 @@ homeRoute.get("/", async (c) => {
       ></div>
 
       <div class="relative max-w-3xl mx-auto px-5 md:px-8 pt-14 pb-16 md:pt-20 md:pb-24">
-        <p class="eyebrow text-mint mb-6">Luthier &amp; guitar repair</p>
+        <p class="eyebrow text-mint mb-6">${hero.eyebrow}</p>
 
         <img
           src="/assets/logo.png"
@@ -49,11 +62,10 @@ homeRoute.get("/", async (c) => {
           height="240"
         >
 
-        <h1 class="text-white max-w-2xl mx-auto">Your guitar deserves expert hands</h1>
+        <h1 class="text-white max-w-2xl mx-auto">${hero.heading}</h1>
 
         <p class="lead mx-auto mb-8" style="color: #d4d8d4; max-width: 36rem;">
-          From a simple setup to a full custom build — I give every instrument
-          the care and attention it deserves.
+          ${hero.lead}
         </p>
 
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -63,67 +75,29 @@ homeRoute.get("/", async (c) => {
       </div>
     </section>
 
-    <!-- Services teaser -->
-    <section class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-20">
-      <div class="text-center mb-10 md:mb-12">
-        <p class="eyebrow mb-3">What I do</p>
-        <h2>Repair, setup, build</h2>
-        <p class="lead mx-auto" style="max-width: 34rem;">
-          Every job, big or small, gets the same level of care.
+    <!-- About Dave — mint accent panel (used once per page) -->
+    <section class="bg-mint">
+      <div class="max-w-3xl mx-auto px-5 md:px-8 py-14 md:py-20">
+        <p class="eyebrow mb-3" style="color: var(--slate-600);">${about.eyebrow}</p>
+        <h2 style="color: var(--slate-ink);">${about.heading}</h2>
+        ${about.paragraphs.map(p => /* html */ `
+          <p style="color: var(--slate-ink);">${p}</p>
+        `).join("")}
+        <p class="mt-6">
+          <a href="/services" class="font-display font-medium text-sm" style="color: var(--slate-ink);">
+            See what I do →
+          </a>
         </p>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        ${serviceCard("Setups &amp; action",   "Intonation, action height, truss-rod adjustment, nut filing — get your guitar playing the way it should.")}
-        ${serviceCard("Fretwork",              "Fret levelling, crowning, polishing, and full refrets. Breathing life back into worn necks.")}
-        ${serviceCard("Electronics",           "Pickup swaps, wiring mods, shielding, jack replacements. Hum-free tone.")}
-        ${serviceCard("Custom builds",         "One-off instruments designed and built around you. Your vision, my craft.")}
-        ${serviceCard("Structural repairs",    "Broken headstocks, cracked tops, neck resets. Expert gluing and clamping.")}
-        ${serviceCard("Restoration",           "Bringing vintage instruments back to playable condition — with respect for originality.")}
-      </div>
-
-      <div class="text-center mt-10">
-        <a href="/services" class="font-display font-medium text-sm">
-          Full services &amp; pricing →
-        </a>
       </div>
     </section>
 
     ${reviews.length > 0 ? reviewsSection(reviews) : ""}
 
-    <!-- About / trust strip — mint accent panel (used once per page) -->
-    <section class="bg-mint">
-      <div class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-20 md:flex md:items-center md:gap-12">
-        <div class="md:flex-1 mb-8 md:mb-0">
-          <p class="eyebrow mb-3" style="color: var(--slate-600);">About Dave</p>
-          <h2 style="color: var(--slate-ink);">Built and repaired since 1993</h2>
-          <p style="color: var(--slate-ink);">
-            I've been repairing and building guitars for over 30 years. Whether it's a
-            beat-up pawn shop find or a prized vintage instrument, I treat every guitar
-            like it matters — because it does.
-          </p>
-          <p style="color: var(--slate-ink);">
-            Based in the UK, I take commissions from players across the country. Turnaround
-            times are honest, communication is clear, and the work speaks for itself.
-          </p>
-          <a href="/portfolio" class="font-display font-medium text-sm" style="color: var(--slate-ink);">
-            See my portfolio →
-          </a>
-        </div>
-
-        <aside class="md:flex-1 grid grid-cols-3 gap-3" aria-label="Workshop stats">
-          ${statBlock("30+",   "Years")}
-          ${statBlock("500+",  "Repairs")}
-          ${statBlock("UK",    "Nationwide")}
-        </aside>
-      </div>
-    </section>
-
     <!-- Final CTA -->
     <section class="max-w-2xl mx-auto px-5 md:px-8 py-14 md:py-20 text-center">
-      <h2>Ready to get started?</h2>
+      <h2>${finalCta.heading}</h2>
       <p class="lead mx-auto mb-7" style="max-width: 32rem;">
-        Tell me about your guitar and what it needs. I'll respond within 24 hours.
+        ${finalCta.lead}
       </p>
       ${primaryButton("/contact", "Request a quote")}
     </section>
@@ -131,29 +105,13 @@ homeRoute.get("/", async (c) => {
 
   return c.html(layout(content, {
     title: "Dave's Guitars",
-    description: "Expert guitar repair, setups, and custom luthier work. Based in the UK — serving players nationwide. Since 1993.",
+    description: "Stringed instrument repair and luthier work in North Shields. Professional work at sensible prices, since 1993.",
     canonicalPath: "/",
     head,
   }))
 })
 
 /* ------------------------------------------------------------------ helpers */
-
-function serviceCard(title: string, desc: string): string {
-  return /* html */ `
-  <article class="bg-ivory rounded-lg p-5 border border-slate-100 transition-colors hover:border-slate-200">
-    <h3 class="text-xl mb-2" style="margin-bottom: var(--space-2);">${title}</h3>
-    <p class="text-sm" style="color: var(--fg-muted); margin-bottom: 0;">${desc}</p>
-  </article>`
-}
-
-function statBlock(value: string, label: string): string {
-  return /* html */ `
-  <div class="bg-ivory rounded-md p-4 text-center border border-mint-deep">
-    <p class="font-display font-bold text-3xl" style="color: var(--slate-ink); margin-bottom: 2px;">${value}</p>
-    <p class="eyebrow" style="color: var(--slate-600);">${label}</p>
-  </div>`
-}
 
 function primaryButton(href: string, label: string): string {
   return /* html */ `<a

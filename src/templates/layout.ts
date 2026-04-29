@@ -10,6 +10,8 @@
  * so it works without any JS at all.
  */
 
+import site from "../../content/site.json"
+
 type LayoutOptions = {
   title: string
   description?: string
@@ -72,11 +74,9 @@ export function layout(content: string, opts: LayoutOptions): string {
 }
 
 const NAV_ITEMS: ReadonlyArray<{ href: string; label: string }> = [
-  { href: "/",          label: "Home" },
-  { href: "/services",  label: "What I do" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/blog",      label: "Blog" },
-  { href: "/contact",   label: "Get a quote" },
+  { href: "/",         label: "Home" },
+  { href: "/services", label: "What I do" },
+  { href: "/contact",  label: "Get a quote" },
 ]
 
 function isActive(itemHref: string, currentPath: string): boolean {
@@ -139,6 +139,7 @@ function mobileNavLink(href: string, label: string, active: boolean): string {
 
 function footer(): string {
   const year = new Date().getFullYear()
+  const c = site.contact
   return /* html */ `
 <footer class="bg-ink text-[var(--fg-on-dark)] mt-24">
   <div class="max-w-site mx-auto px-5 md:px-8 py-12">
@@ -150,28 +151,42 @@ function footer(): string {
           <img src="/assets/logo.png" alt="Dave's Guitars" class="h-12" width="130" height="48">
         </a>
         <p class="text-sm leading-relaxed text-slate-300 max-w-xs">
-          Expert guitar repair, setups, and custom luthier work — serving guitarists across the UK.
+          ${site.footerBlurb}
+        </p>
+        <p class="text-xs text-slate-400 mt-3">
+          ${c.addressLocality}, ${c.addressRegion} · ${c.postcode}
         </p>
       </div>
 
       <nav aria-label="Footer navigation">
         <p class="eyebrow mb-3 text-slate-300">Pages</p>
         <ul class="space-y-2 text-sm" role="list">
-          <li><a href="/services"  class="text-slate-300 no-underline hover:text-mint transition-colors">What I do</a></li>
-          <li><a href="/portfolio" class="text-slate-300 no-underline hover:text-mint transition-colors">Portfolio</a></li>
-          <li><a href="/blog"      class="text-slate-300 no-underline hover:text-mint transition-colors">Blog</a></li>
-          <li><a href="/contact"   class="text-slate-300 no-underline hover:text-mint transition-colors">Get a quote</a></li>
+          <li><a href="/"         class="text-slate-300 no-underline hover:text-mint transition-colors">Home</a></li>
+          <li><a href="/services" class="text-slate-300 no-underline hover:text-mint transition-colors">What I do</a></li>
+          <li><a href="/contact"  class="text-slate-300 no-underline hover:text-mint transition-colors">Get a quote</a></li>
         </ul>
       </nav>
 
       <div>
         <p class="eyebrow mb-3 text-slate-300">Get in touch</p>
-        <p class="text-sm leading-relaxed text-slate-300">
-          Got a guitar that needs attention?<br>
-          <a href="/contact" class="text-mint no-underline hover:text-mint-deep transition-colors">
-            Send a message →
-          </a>
-        </p>
+        <ul class="space-y-2 text-sm" role="list">
+          <li>
+            <a href="tel:${c.phoneTel}" class="text-slate-300 no-underline hover:text-mint transition-colors">
+              ${c.phoneDisplay}
+            </a>
+          </li>
+          <li>
+            <a href="mailto:${c.email}" class="text-slate-300 no-underline hover:text-mint transition-colors">
+              ${c.email}
+            </a>
+          </li>
+          <li>
+            <a href="${c.instagramUrl}" rel="me noopener" target="_blank"
+               class="text-slate-300 no-underline hover:text-mint transition-colors">
+              Instagram ${c.instagramHandle}
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
 

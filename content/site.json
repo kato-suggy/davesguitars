@@ -1,0 +1,51 @@
+{
+  "contact": {
+    "phoneDisplay": "07716 344663",
+    "phoneTel": "+447716344663",
+    "email": "dave@davesguitar.co.uk",
+    "instagramHandle": "@davewasp",
+    "instagramUrl": "https://instagram.com/davewasp",
+    "addressLocality": "North Shields",
+    "addressRegion": "Tyne and Wear",
+    "postcode": "NE29 6SL",
+    "country": "GB"
+  },
+
+  "home": {
+    "hero": {
+      "eyebrow": "Luthier & guitar repair",
+      "heading": "Your guitar deserves expert hands",
+      "lead": "From a simple setup to a full custom build — I give every instrument the care and attention it deserves."
+    },
+    "about": {
+      "eyebrow": "About Dave",
+      "heading": "Built and repaired since 1993",
+      "paragraphs": [
+        "Hi, I'm Dave — a full-time stringed instrument repairer and luthier based in North Shields. I've been repairing instruments since 1993, trained at the City of Leeds College of Music, and have worked with touring bands, recording studios, schools, and retailers including JG Windows and PMT.",
+        "Professional work at sensible prices, on everything from guitars to sitars."
+      ]
+    },
+    "finalCta": {
+      "heading": "Ready to get started?",
+      "lead": "Tell me about your guitar and what it needs. I'll respond within 24 hours."
+    }
+  },
+
+  "services": {
+    "hero": {
+      "eyebrow": "Services & pricing",
+      "heading": "What I do",
+      "lead": "All prices are starting points. I'll give you an exact quote once I've assessed your instrument."
+    }
+  },
+
+  "contactPage": {
+    "hero": {
+      "eyebrow": "Get in touch",
+      "heading": "Get a quote",
+      "lead": "Tell me about your guitar and what it needs — or call, email, or DM directly."
+    }
+  },
+
+  "footerBlurb": "Full-time luthier and guitar repair, based in North Shields. Professional work at sensible prices."
+}

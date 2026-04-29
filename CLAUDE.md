@@ -2,111 +2,108 @@
 
 ## Project Overview
 
-Website for Dave's Guitars — a guitar repair and luthier shop. The site showcases repair services, custom builds, and provides a way for customers to get in touch or book work.
+Website for Dave's Guitars — a guitar repair and luthier shop based in North Shields. The site explains what Dave does, lists prices, and gives customers ways to get in touch (form, phone, email, Instagram).
+
+**Scope (deliberate):** three pages — Home, Services, Get a Quote. No blog, no portfolio, no admin panel. Content (text + prices) is edited by Dave directly on GitHub by editing JSON files in `content/`; Cloudflare auto-deploys on push to `main`. Images are out of scope until Dave is ready to add them — only the static logo ships.
 
 ## Tech Stack
 
 - **Framework:** Hono (TypeScript) on Cloudflare Workers
-- **Interactivity:** HTMX (progressive enhancement — all pages work without JS)
-- **Styling:** Tailwind CSS via Play CDN (plan: purge to static CSS in v2)
-- **Storage:** Cloudflare KV (blog posts, portfolio index) + R2 (images)
-- **Email:** Resend API
+- **Interactivity:** Plain HTML forms (POST + redirect). Datastar is loaded from CDN as a placeholder for future progressive enhancement; nothing on the site currently depends on it.
+- **Styling:** Tailwind CSS (CLI build → `public/styles.css`) + design tokens in `src/styles/tokens.css`
+- **Content:** JSON files in `content/`, imported at build time (no runtime DB)
+- **Email:** Resend API (contact form)
+- **Reviews:** Google Places API (homepage reviews feed)
 - **Hosting:** Cloudflare Workers — free tier (~£10/yr domain only)
 
 ## Development Commands
 
 ```bash
-npm install          # Install dependencies (includes wrangler, hono, marked)
-npm run dev          # wrangler dev — local dev server
-npm run build        # dry-run build (type check + bundle)
-npm run deploy       # wrangler deploy — push to Cloudflare
+npm install          # hono + tailwindcss + wrangler
+npm run dev          # wrangler dev + tailwind --watch (concurrently)
+npm run build        # build CSS + wrangler dry-run (type check + bundle)
+npm run deploy       # build CSS + wrangler deploy
 ```
 
 ## Project Structure
 
 ```
+content/
+├── site.json             # All editable copy: hero text, About Dave,
+│                         # contact details (phone/email/insta/address),
+│                         # footer blurb. Edited by Dave on GitHub.
+└── services.json         # Price table: [{ service, price }]
+
 src/
-├── index.ts              # Hono app entry, mounts all routes + sitemap + 404
-├── types.ts              # Env bindings, BlogPost, PortfolioImage types
+├── index.ts              # Hono app entry, mounts routes + sitemap + 404
+├── types.ts              # Env bindings, Review type
 ├── routes/
 │   ├── home.ts           # GET /
 │   ├── services.ts       # GET /services
-│   ├── portfolio.ts      # GET /portfolio
-│   ├── blog.ts           # GET /blog, GET /blog/:slug
-│   ├── contact.ts        # GET + POST /contact
-│   └── admin.ts          # /admin/* — login, dashboard, CRUD
+│   └── contact.ts        # GET + POST /contact (form + direct-contact block)
 ├── templates/
-│   └── layout.ts         # HTML shell, nav, footer, Tailwind config, HTMX
+│   └── layout.ts         # HTML shell, nav, footer (reads site.json contact)
+├── styles/
+│   └── (Tailwind input + design tokens)
 └── lib/
-    ├── kv.ts             # KV helpers (blog posts, portfolio index)
-    ├── auth.ts           # HMAC session cookies
-    ├── markdown.ts       # marked.js wrapper + light sanitiser
-    └── email.ts          # Resend API wrapper
+    ├── email.ts          # Resend API wrapper (contact form)
+    └── reviews.ts        # Google Places API wrapper (homepage reviews)
+
 public/
-├── styles.css            # Minimal base styles (Tailwind handles the rest)
-└── htmx.min.js           # HTMX — served from Workers Assets
+├── styles.css            # Built by Tailwind CLI (gitignored)
+├── assets/               # Logo + favicon
+└── fonts/                # Self-hosted display + body fonts
 ```
 
 ## Routes
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/` | Homepage |
-| GET | `/services` | Services & pricing |
-| GET | `/portfolio` | Photo grid (R2 images) |
-| GET | `/blog` | Blog list (KV, paginated) |
-| GET | `/blog/:slug` | Blog post (markdown → HTML) |
-| GET/POST | `/contact` | Quote request form (Resend email) |
-| GET | `/admin` | Redirects to login or dashboard |
-| GET/POST | `/admin/login` | Admin login (SHA-256 password + HMAC session) |
-| GET | `/admin/dashboard` | Post list + portfolio thumbs |
-| GET/POST | `/admin/posts/new` | Create post |
-| GET/POST | `/admin/posts/:slug/edit` | Edit post |
-| DELETE | `/admin/posts/:slug` | Delete post (HTMX) |
-| POST | `/admin/preview` | Markdown → HTML preview (HTMX) |
-| GET/POST | `/admin/portfolio/upload` | Upload image to R2 |
-| POST | `/admin/portfolio/:filename/delete` | Delete image |
+| GET | `/` | Homepage — hero, About Dave, Google reviews, CTA |
+| GET | `/services` | Services & pricing table (from `content/services.json`) |
+| GET/POST | `/contact` | Quote form + phone/email/insta direct-contact block |
+| GET | `/sitemap.xml` | Sitemap (3 URLs) |
+| GET | `/robots.txt` | Robots policy |
 
 ## Secrets (set via `wrangler secret put`)
 
 | Secret | Description |
 |--------|-------------|
-| `ADMIN_PASSWORD_HASH` | SHA-256 hex of Dave's admin password |
-| `SESSION_SECRET` | 32-byte random hex for HMAC signing |
-| `RESEND_API_KEY` | From resend.com |
-| `CONTACT_EMAIL` | Dave's email address |
+| `RESEND_API_KEY` | From resend.com — sends contact-form emails |
+| `CONTACT_EMAIL` | Dave's email address (recipient for the form) |
+| `GOOGLE_PLACES_API_KEY` | Maps Platform key, restricted to Places API (legacy) — for the reviews feed |
 
-Generate password hash:
-```bash
-node -e "const c=require('crypto');process.stdout.write(c.createHash('sha256').update('yourpassword').digest('hex'))"
-```
+`PLACE_ID` is in `wrangler.toml` `[vars]` (it's a public identifier, not a secret).
 
-## KV Data Format
+## Content Editing (Dave's workflow)
 
-- `posts:index` → `BlogIndexEntry[]` (sorted newest first)
-- `post:{slug}` → `BlogPost` (full post with markdown content)
-- `portfolio:index` → `PortfolioImage[]` (sorted newest first)
+Dave edits content by going to the repo on github.com:
+
+- **Prices:** edit `content/services.json` — add/remove rows, change prices.
+- **About Dave / hero copy / footer blurb:** edit `content/site.json`.
+- **Contact details (phone, email, Instagram, address):** edit the `contact` block in `content/site.json`.
+
+Save (commit) on GitHub → Cloudflare auto-redeploys in ~30–60s.
 
 ## Site Goals
 
-- Showcase repair and luthier services
-- Allow customers to contact Dave or request a quote
-- Display past work / portfolio of builds and repairs
-- Establish credibility and local presence
-- Dave can manage blog and portfolio from `/admin` without developer help
+- Explain what Dave does and what it costs
+- Make it easy to get in touch (form OR phone/email/DM)
+- Establish credibility — verifiable specifics (City of Leeds, JG Windows, PMT) over round-number stats
+- Dave can update text and prices himself, no developer needed
 
 ## Success Criteria
 
 - Sub-100ms page loads (Cloudflare edge SSR)
-- Works without JavaScript (all forms are plain POST, HTMX is enhancement)
-- Dave can add content independently via `/admin`
+- Works without JavaScript (forms are plain POST + redirect)
+- Dave can change text and prices via GitHub web UI alone
 - Under £20/year (~£10 domain only, everything else free tier)
 - Perfect Lighthouse scores (SSR, minimal JS, semantic HTML)
 
 ## Code Conventions
 
-- HTML strings with `/* html */` template literal comments (for editor syntax highlighting)
-- `escHtml()` helper used wherever user/external data is interpolated into HTML
-- All templates are plain TypeScript functions returning strings (no JSX)
-- HTMX interactions always have a no-JS `<noscript>` or query-param fallback
-- Commit messages: imperative mood, concise (e.g. "Add contact form")
+- HTML strings tagged with `/* html */` template-literal comments (editor highlighting)
+- `escHtml()` helper for any user-supplied data (currently only review text from the Places API)
+- Content from `content/*.json` is treated as developer-controlled (build-time, not user input) and interpolated raw — keep HTML-special chars out of JSON values
+- Templates are plain TS functions returning strings (no JSX)
+- Commit messages: imperative, concise (e.g. "Bump setup price to £60")

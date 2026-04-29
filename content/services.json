@@ -1,0 +1,18 @@
+[
+  { "service": "Restring and fret polish",            "price": "£20" },
+  { "service": "Partial setup",                       "price": "£30" },
+  { "service": "Setup and service",                   "price": "£60" },
+  { "service": "Fret level, recrown and setup",       "price": "£90" },
+  { "service": "Refrets",                             "price": "from £180" },
+  { "service": "Output jack installation",            "price": "from £10" },
+  { "service": "Electrical repairs",                  "price": "from £20" },
+  { "service": "Pickup installation",                 "price": "from £25" },
+  { "service": "Cavity routing",                      "price": "from £40" },
+  { "service": "Replacement nut installation",        "price": "from £30" },
+  { "service": "Headstock and neck breaks",           "price": "from £60" },
+  { "service": "Neck refinish",                       "price": "from £100" },
+  { "service": "Body refinish",                       "price": "from £250" },
+  { "service": "Acoustic breaks / splits",            "price": "from £40" },
+  { "service": "Acoustic pickup system installation", "price": "from £40" },
+  { "service": "All other work",                      "price": "Price on assessment" }
+]
