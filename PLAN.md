@@ -1,12 +1,60 @@
 # Dave's Guitars — Rewrite Plan
 
-> Proposed by Gerard Webb. Planned with Claude Code. Not yet implemented.
+> Proposed by Gerard Webb. Planned with Claude Code.
 
 ---
 
-## Why Rewrite?
+## Update — 2026-04-29: Scope Pivot to Minimum Viable Site
 
-The current site uses HTMX + Cloudflare KV + a custom admin panel. This plan replaces it with
+After more conversation with Dave, the rewrite scope has been **massively trimmed** for the
+first deployable version. Dave is realistic that he won't blog regularly, and won't be
+adding portfolio images yet — he just needs occasional small edits to text and prices.
+
+### Current scope (what ships first)
+
+- **Three pages only:** Home, Services, Get a Quote
+- **No portfolio, no blog, no admin panel, no images** beyond the static logo
+- **Content lives in `content/*.json` in the repo** — Dave edits these via GitHub's web UI
+- **Cloudflare auto-deploys on push to `main`** (set up via the Workers dashboard's Git
+  integration, or a small `wrangler deploy` GitHub Action)
+- **Plain HTML forms** (POST + redirect) — Datastar is loaded but not driving anything yet
+- **Google Places reviews feed** stays on the homepage (already wired up)
+
+### Deferred (still in this plan, not abandoned)
+
+These remain on the roadmap for whenever Dave is ready to put the work in — most likely
+once the site is live and he has a feel for what he actually wants to manage:
+
+- Drive-backed **blog** (`Phase 2 — step 7`)
+- Drive-backed **portfolio** (`Phase 2 — step 7`)
+- **Repair estimator** AI feature (`Phase 3 — step 10`)
+- **MCP server** (`Phase 3 — step 11`)
+- **Bun migration** (`Phase 4 — step 13`)
+
+### Why this pivot is a net win
+
+- Dave learns to edit JSON on GitHub before being asked to manage Docs in Drive — lower
+  cognitive cost, and version history is a free side benefit.
+- ~1100 lines of admin/auth/KV code deleted; ~70 lines of JSON added.
+- The Drive integration's complexity (service account, JWT signing, folder ID config) is
+  removed from the critical path to launch.
+- Easy to layer Drive in later for blog/portfolio without disturbing the JSON-driven
+  pages — they coexist cleanly.
+
+### What stayed from Phase 1 (the design-system foundations)
+
+- Datastar loaded from CDN (placeholder for future use)
+- Tailwind CLI build (no Play CDN)
+- Design system tokens in `src/styles/tokens.css`
+- Self-hosted Arimo + Georgia fonts
+- Logo-led header, sentence-case nav, no emoji
+- Google Business reviews feed (Places API, 24h Cache API, three latest reviews)
+
+---
+
+## Why Rewrite? (original motivation, preserved)
+
+The original site used HTMX + Cloudflare KV + a custom admin panel. This plan replaces it with
 Gerard's preferred stack — a modern, edge-ready architecture that's worth learning and a better
 long-term foundation for the site.
 
@@ -175,66 +223,78 @@ API (`crypto.subtle`) — no extra dependencies needed.
 
 ## Build Order (for Developer Reference)
 
+Status legend: **[done]** = shipped · **[current]** = in flight · **[deferred]** = paused
+until Dave needs it.
+
 **Phase 1 — foundations (no Cloudflare account needed; runs in `wrangler dev` locally)**
 
-0. **Design system intake** — drop `colors_and_type.css`, `Arimo` fonts, and `logo.png`
-   into `public/`; set up Tailwind CLI build (replaces Play CDN); wire tokens into
-   `tailwind.config.ts`
-1. **Layout + voice pass** — rewrite `src/templates/layout.ts` against the design system;
-   drop HTMX script, add Datastar; logo-led header; sentence-case nav; no emoji
-2. **`wrangler.toml`** — remove KV/R2 bindings, add Drive folder ID vars
-3. **`src/types.ts`** + **`src/lib/utils.ts`** — foundation types and helpers
-4. **Delete dead files**: `admin.ts`, `kv.ts`, `auth.ts`, `markdown.ts`, `htmx.min.js`,
-   `routes/admin/*`
+0. **[done]** Design system intake — `tokens.css`, Arimo fonts, logo in `public/`;
+   Tailwind CLI build (replaces Play CDN); tokens wired into `tailwind.config.ts`
+1. **[done]** Layout + voice pass — `src/templates/layout.ts` rewritten against the
+   design system; HTMX script dropped, Datastar added; logo-led header; sentence-case
+   nav; no emoji. (Nav now: Home / What I do / Get a quote.)
+2. **[done]** `wrangler.toml` — KV/R2 bindings removed. Drive folder ID vars
+   **deferred** (added back when Drive lands).
+3. **[done]** `src/types.ts` + helpers — foundation types pruned to `Env` + `Review`.
+4. **[done]** Delete dead files — `admin.ts`, `kv.ts`, `auth.ts`, `markdown.ts`,
+   `htmx.min.js`, `routes/admin/*`, `routes/blog.ts`, `routes/portfolio.ts`.
 
-**Phase 2 — content & forms (still local; needs Drive service account credentials)**
+**Phase 1.5 — content extraction (added 2026-04-29, current scope)**
 
-5. **Google Drive setup** (Cloud Console, service account, folder structure) —
-   ★ user has created the parent Drive folder
+4a. **[done]** `content/services.json` + `content/site.json` — all editable copy
+    extracted from route files into JSON (Dave edits these on GitHub). `tsconfig`
+    gets `resolveJsonModule: true` and `content/**/*.json` in `include`.
+4b. **[done]** Routes consume JSON — `home.ts`, `services.ts`, `contact.ts`, and
+    `templates/layout.ts` all import from `content/site.json`; `services.ts` reads
+    the price table from `content/services.json`.
+4c. **[done]** Services page redesign — fancy card grid replaced with a simple
+    `<table>` (matches the holding page's design and Dave's preference).
+4d. **[done]** Home page simplification — services teaser cards section deleted;
+    About Dave moved above reviews using the holding-page text; stat tiles dropped.
+4e. **[done]** Contact page direct-contact block — phone / email / Instagram tap
+    cards above the form. HTMX wiring stripped in favour of plain POST + redirect
+    (Datastar will pick this up later if/when needed).
+4f. **[deferred]** GitHub auto-deploy — connect the repo to Cloudflare Workers
+    Builds (or add a small `wrangler deploy` GitHub Action). One-time setup before
+    Dave can edit JSON on GitHub.
+
+**Phase 2 — content & forms (deferred; needs Drive service account credentials)**
+
+5. **[deferred]** Google Drive setup — parent folder already created
    (`https://drive.google.com/drive/folders/14ylk40a4SQ8NzXRN-1Z3DDyTA31oU9m0`,
-   ID `14ylk40a4SQ8NzXRN-1Z3DDyTA31oU9m0`).
-   Remaining: create `Blog` and `Portfolio` subfolders inside it, set up GCP project,
-   enable Drive API, create service account, share parent folder (or each subfolder)
-   with the service-account email as Viewer, download credentials JSON,
-   store as `GOOGLE_SERVICE_ACCOUNT_JSON` secret. Folder ID goes into `wrangler.toml`
-   `[vars]` as `DRIVE_PARENT_FOLDER_ID` (not a secret — just a pointer).
-6. **`src/lib/drive.ts`** — Drive client (manual JWT auth via Web Crypto + API calls)
-7. **`src/routes/blog.ts`** + **`src/routes/portfolio.ts`** — Drive-backed (apply design system)
-8. **`src/routes/services.ts`** + **`src/routes/home.ts`** — restyle to design system,
-   drop emoji service icons (use Lucide via CDN at stroke-width 1.75)
-9. **`src/routes/contact.ts`** — Zod + Datastar SSE (apply design system)
+   ID `14ylk40a4SQ8NzXRN-1Z3DDyTA31oU9m0`). Remaining: `Blog`/`Portfolio`
+   subfolders, GCP project, Drive API enabled, service account, share folder as
+   Viewer, store credentials as `GOOGLE_SERVICE_ACCOUNT_JSON` secret,
+   `DRIVE_PARENT_FOLDER_ID` in `wrangler.toml` `[vars]`.
+6. **[deferred]** `src/lib/drive.ts` — Drive client (manual JWT auth via Web Crypto)
+7. **[deferred]** `src/routes/blog.ts` + `src/routes/portfolio.ts` — Drive-backed
+8. **[done]** `src/routes/services.ts` + `src/routes/home.ts` — design-system
+   restyle done; emoji icons not used (the holding-page-style table doesn't need them).
+9. **[deferred]** `src/routes/contact.ts` Zod + Datastar SSE — current
+   implementation is plain POST + redirect. Layer Zod and Datastar in when we
+   have a reason to (e.g. if validation feedback gets richer than the current
+   per-field errors).
 
-9b. **Google Business reviews feed** — `src/lib/reviews.ts` + homepage trust strip
-    - **API:** Google **Places API (legacy)** → Place Details endpoint
-      `https://maps.googleapis.com/maps/api/place/details/json` with
-      `?fields=reviews,rating,user_ratings_total` (returns up to 5 most-relevant
-      reviews). Limit fields to keep us in the cheaper "Atmosphere" SKU and
-      avoid Contact Data charges. Simpler than the (now-restricted) Business
-      Profile API. Free tier covers small-volume use.
-    - **Auth:** Maps Platform API key (separate from Drive service account).
-      Store as `GOOGLE_PLACES_API_KEY` secret.
-    - **Identifier:** Dave's Google Business *Place ID* in `wrangler.toml`
-      `[vars]` as `PLACE_ID = "ChIJmVPVDflufkgRuAgB93v-5Bw"` (not a secret — public identifier).
-    - **Caching:** Cloudflare Workers Cache API, `cache-control: max-age=86400`
-      (24h). Reviews don't change often and Places quota is per-day.
-    - **Display (per design system):** 3 most recent, star row + first 2 lines +
-      reviewer initials. Sentence-case "Recent reviews" header, not "Testimonials".
-    - **Fallback:** if API call fails, render nothing (no skeleton, no error) —
-      the section just doesn't appear.
+9b. **[done]** Google Business reviews feed — `src/lib/reviews.ts` + homepage
+    block (above About? — currently below). Places API legacy endpoint, key in
+    `GOOGLE_PLACES_API_KEY` secret, `PLACE_ID` in `wrangler.toml` `[vars]`,
+    24h Workers Cache API, fallback renders nothing on failure. All as planned.
 
-**Phase 3 — AI features (still local; needs Anthropic API key)**
+**Phase 3 — AI features (deferred; needs Anthropic API key)**
 
-10. **`src/routes/estimate.ts`** — AI estimator (Claude streaming via Hono SSE)
-11. **`src/routes/mcp.ts`** — MCP server
-12. **`src/index.ts`** — wire everything, update sitemap/robots, custom 404
+10. **[deferred]** `src/routes/estimate.ts` — AI estimator (Claude streaming via Hono SSE)
+11. **[deferred]** `src/routes/mcp.ts` — MCP server
+12. **[done]** `src/index.ts` — sitemap (3 URLs), robots, custom 404. Re-wire when
+    new routes (estimate / mcp / blog / portfolio) come back.
 
 **Phase 4 — tooling and deploy**
 
-13. **Bun migration** — update `package.json`, replace npm scripts, lock-file swap.
-    Done last so any breakage is isolated to package-manager changes, not bundled
-    with framework/CSS work.
-14. **Cloudflare setup + deploy** — `wrangler login`, connect domain, set secrets
-    (`wrangler secret put RESEND_API_KEY` / `ANTHROPIC_API_KEY` / Drive creds), deploy.
+13. **[deferred]** Bun migration — npm is fine for the current minimal scope.
+    Revisit when adding back Drive / Anthropic SDK / MCP dependencies.
+14. **[current]** Cloudflare setup + deploy — `wrangler login`, connect
+    `davesguitar.co.uk`, set secrets (`RESEND_API_KEY`, `CONTACT_EMAIL`,
+    `GOOGLE_PLACES_API_KEY`), deploy. Then connect repo for GitHub auto-deploy
+    (4f above) so Dave can edit JSON without local tooling.
 
 ---
 
