@@ -75,7 +75,7 @@ export function layout(content: string, opts: LayoutOptions): string {
 
 const NAV_ITEMS: ReadonlyArray<{ href: string; label: string }> = [
   { href: "/",         label: "Home" },
-  { href: "/services", label: "What I do" },
+  { href: "/services", label: "Services" },
   { href: "/contact",  label: "Get a quote" },
 ]
 
@@ -162,7 +162,7 @@ function footer(): string {
         <p class="eyebrow mb-3 text-slate-300">Pages</p>
         <ul class="space-y-2 text-sm" role="list">
           <li><a href="/"         class="text-slate-300 no-underline hover:text-mint transition-colors">Home</a></li>
-          <li><a href="/services" class="text-slate-300 no-underline hover:text-mint transition-colors">What I do</a></li>
+          <li><a href="/services" class="text-slate-300 no-underline hover:text-mint transition-colors">Services</a></li>
           <li><a href="/contact"  class="text-slate-300 no-underline hover:text-mint transition-colors">Get a quote</a></li>
         </ul>
       </nav>

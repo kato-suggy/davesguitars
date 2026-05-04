@@ -94,7 +94,6 @@ function contactPage(banner: string, values: FormValues = {}): string {
   return /* html */ `
     <section class="bg-ink py-14 md:py-20 text-center">
       <div class="max-w-3xl mx-auto px-5 md:px-8">
-        <p class="eyebrow text-mint mb-3">${hero.eyebrow}</p>
         <h1 class="text-white">${hero.heading}</h1>
         <p class="lead mx-auto" style="color: #d4d8d4; max-width: 36rem;">
           ${hero.lead}
@@ -126,7 +125,12 @@ function directContactBlock(): string {
             <a href="tel:${c.phoneTel}"
                class="block bg-ivory border border-mint-deep rounded-md px-4 py-3 no-underline transition-colors hover:bg-bone-2"
                style="color: var(--slate-ink);">
-              <p class="eyebrow m-0 mb-1" style="color: var(--slate-600);">Phone</p>
+              <p class="eyebrow m-0 mb-1 flex items-center gap-1.5" style="color: var(--slate-600);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                Phone
+              </p>
               <p class="font-display font-semibold text-base m-0">${c.phoneDisplay}</p>
             </a>
           </li>
@@ -134,7 +138,13 @@ function directContactBlock(): string {
             <a href="mailto:${c.email}"
                class="block bg-ivory border border-mint-deep rounded-md px-4 py-3 no-underline transition-colors hover:bg-bone-2"
                style="color: var(--slate-ink);">
-              <p class="eyebrow m-0 mb-1" style="color: var(--slate-600);">Email</p>
+              <p class="eyebrow m-0 mb-1 flex items-center gap-1.5" style="color: var(--slate-600);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="20" height="16" x="2" y="4" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+                Email
+              </p>
               <p class="font-display font-semibold text-sm m-0 break-all">${c.email}</p>
             </a>
           </li>
@@ -142,7 +152,14 @@ function directContactBlock(): string {
             <a href="${c.instagramUrl}" rel="me noopener" target="_blank"
                class="block bg-ivory border border-mint-deep rounded-md px-4 py-3 no-underline transition-colors hover:bg-bone-2"
                style="color: var(--slate-ink);">
-              <p class="eyebrow m-0 mb-1" style="color: var(--slate-600);">Instagram</p>
+              <p class="eyebrow m-0 mb-1 flex items-center gap-1.5" style="color: var(--slate-600);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+                Instagram
+              </p>
               <p class="font-display font-semibold text-base m-0">${c.instagramHandle}</p>
             </a>
           </li>

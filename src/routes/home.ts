@@ -51,8 +51,6 @@ homeRoute.get("/", async (c) => {
       ></div>
 
       <div class="relative max-w-3xl mx-auto px-5 md:px-8 pt-14 pb-16 md:pt-20 md:pb-24">
-        <p class="eyebrow text-mint mb-6">${hero.eyebrow}</p>
-
         <img
           src="/assets/logo.png"
           alt="Dave's Guitars logo"

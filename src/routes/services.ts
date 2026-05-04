@@ -13,7 +13,6 @@ servicesRoute.get("/", (c) => {
     <!-- Page header -->
     <section class="bg-ink py-14 md:py-20 text-center">
       <div class="max-w-3xl mx-auto px-5 md:px-8">
-        <p class="eyebrow text-mint mb-3">${hero.eyebrow}</p>
         <h1 class="text-white">${hero.heading}</h1>
         <p class="lead mx-auto" style="color: #d4d8d4; max-width: 36rem;">
           ${hero.lead}

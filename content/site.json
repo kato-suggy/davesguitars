@@ -13,7 +13,6 @@
 
   "home": {
     "hero": {
-      "eyebrow": "Luthier & guitar repair",
       "heading": "Your guitar deserves expert hands",
       "lead": "From a simple setup to a full custom build — I give every instrument the care and attention it deserves."
     },
@@ -33,7 +32,6 @@
 
   "services": {
     "hero": {
-      "eyebrow": "Services & pricing",
       "heading": "What I do",
       "lead": "All prices are starting points. I'll give you an exact quote once I've assessed your instrument."
     }
@@ -41,7 +39,6 @@
 
   "contactPage": {
     "hero": {
-      "eyebrow": "Get in touch",
       "heading": "Get a quote",
       "lead": "Tell me about your guitar and what it needs — or call, email, or DM directly."
     }
