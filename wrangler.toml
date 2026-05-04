@@ -17,3 +17,10 @@ PLACE_ID = "ChIJmVPVDflufkgRuAgB93v-5Bw"
 # RESEND_API_KEY           - from resend.com
 # CONTACT_EMAIL            - Dave's email address
 # GOOGLE_PLACES_API_KEY    - Maps Platform key restricted to Places API (legacy)
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[observability.traces]
+enabled = true
