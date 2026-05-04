@@ -29,11 +29,11 @@ const GUITAR_TYPES = [
 contactRoute.get("/", (c) => {
   const message = c.req.query("message")
   const banner = message === "sent"
-    ? /* html */ `<div role="alert" class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-6 py-4 mb-8 text-center">
+    ? /* html */ `<div role="alert" class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-6 py-4 mt-8 mb-8 text-center">
         <strong>Message sent!</strong> I'll get back to you within 24 hours.
        </div>`
     : message === "error"
-    ? /* html */ `<div role="alert" class="bg-red-50 border border-red-200 text-red-800 rounded-lg px-6 py-4 mb-8 text-center">
+    ? /* html */ `<div role="alert" class="bg-red-50 border border-red-200 text-red-800 rounded-lg px-6 py-4 mt-8 mb-8 text-center">
         <strong>Something went wrong.</strong> Please try again, or contact me directly using the details above.
        </div>`
     : ""
