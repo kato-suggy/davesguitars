@@ -21,6 +21,3 @@ PLACE_ID = "ChIJmVPVDflufkgRuAgB93v-5Bw"
 [observability.logs]
 enabled = true
 invocation_logs = true
-
-[observability.traces]
-enabled = true
