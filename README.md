@@ -61,3 +61,4 @@ Dave edits content directly on GitHub:
 Commit on github.com → Cloudflare redeploys in ~30–60s.
 
 See [CLAUDE.md](./CLAUDE.md) for the full architectural overview.
+
