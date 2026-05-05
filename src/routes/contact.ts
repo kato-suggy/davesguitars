@@ -233,7 +233,7 @@ function formFragment(values: FormValues = {}): string {
     </button>
 
     <p class="text-xs text-slate-400 text-center">
-      I'll respond within 24 hours. No spam, no mailing lists.
+      No spam, no mailing lists.
     </p>
   </form>`
 }
