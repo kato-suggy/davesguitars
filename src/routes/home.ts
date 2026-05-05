@@ -130,7 +130,6 @@ function reviewsSection(reviews: Review[]): string {
     <!-- Recent Google reviews -->
     <section class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-20">
       <div class="text-center mb-10 md:mb-12">
-        <p class="eyebrow mb-3">Recent reviews</p>
         <h2>What people say</h2>
         <p class="lead mx-auto" style="max-width: 32rem;">
           Real reviews from Google — never fabricated, never edited.
