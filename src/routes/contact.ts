@@ -16,14 +16,16 @@ const REPAIR_TYPES = [
   "Other / not sure",
 ]
 
-const GUITAR_TYPES = [
+const INSTRUMENT_TYPES = [
   "Electric guitar",
   "Acoustic guitar",
   "Bass guitar",
   "Classical / nylon string",
   "Semi-hollow / archtop",
   "12-string",
-  "Other",
+  "Mandolin / ukulele / banjo",
+  "Violin / viola family",
+  "Other stringed instrument",
 ]
 
 contactRoute.get("/", (c) => {
@@ -58,7 +60,7 @@ contactRoute.post("/", async (c) => {
   if (!name)       errors.name       = "Please enter your name."
   if (!email || !email.includes("@"))
                    errors.email      = "Please enter a valid email address."
-  if (!guitarType) errors.guitarType = "Please select a guitar type."
+  if (!guitarType) errors.guitarType = "Please select an instrument type."
   if (!repairType) errors.repairType = "Please select a repair type."
   if (!message || message.length < 10)
                    errors.message    = "Please describe what your guitar needs (at least 10 characters)."
@@ -195,8 +197,8 @@ function formFragment(values: FormValues = {}): string {
     </div>
 
     ${select({
-      id: "guitarType", label: "Type of guitar",
-      options: GUITAR_TYPES, value: guitarType, error: errors.guitarType,
+      id: "guitarType", label: "Type of instrument",
+      options: INSTRUMENT_TYPES, value: guitarType, error: errors.guitarType,
     })}
 
     ${select({
